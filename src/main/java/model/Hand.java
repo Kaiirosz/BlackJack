@@ -14,27 +14,19 @@ public class Hand {
         cards.add(card);
     }
 
-    public void removePair(Card card, Card anotherCard){
-        if (!cards.contains(card) || !cards.contains(anotherCard)){
-            throw new IllegalArgumentException("Incorrect cards!!");
-        }
-        cards.remove(card);
-        cards.remove(anotherCard);
-    }
-
-    public Card giveCard(int index){
-        Card givenCard = cards.get(index);
-        cards.remove(givenCard);
-        return givenCard;
-    }
-
-    public String displayHiddenHand(){
+    public void displayHand() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < cards.size(); i++) {
-            sb.append("\uD83C\uDCA0").append(" ");
+            if (i == cards.size() - 1) {
+                sb.append(cards.get(i).getCardNotation());
+                continue;
+            }
+            sb.append(cards.get(i).getCardNotation()).append(", ");
         }
-        return sb.toString();
+        System.out.println(sb);
     }
+
+
 
     public int getNumberOfCards(){
         return cards.size();

@@ -27,18 +27,6 @@ public class Deck  {
         return cards.size();
     }
 
-    public Card removeRandomQueen() {
-        List<Card> queens = new ArrayList<>();
-        for (Card c : cards) {
-            if (c.getValue().equals(Value.QUEEN)) {
-                queens.add(c);
-            }
-        }
-        Random random = new Random();
-        Card randomQueen = queens.get(random.nextInt(queens.size()));
-        cards.remove(randomQueen);
-        return randomQueen;
-    }
 
     public void shuffleDeck(){
         Collections.shuffle(cards);

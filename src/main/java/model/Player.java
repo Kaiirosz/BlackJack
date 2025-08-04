@@ -4,10 +4,12 @@ import java.util.List;
 
 public class Player {
     private final String name;
+    private int money;
     private final Hand hand;
 
-    public Player(String name) {
+    public Player(String name, int money) {
         this.name = name;
+        this.money = money;
         hand = new Hand();
     }
 
@@ -15,22 +17,21 @@ public class Player {
         return name;
     }
 
+    public int getMoney(){
+        return money;
+    }
 
-    public void addToHand(Card card) {
+    public void setMoney(int newMoney){
+        money = newMoney;
+    }
+
+
+    public void addCardToHand(Card card) {
         hand.addCard(card);
     }
 
     public int getHandSize() {
         return hand.getNumberOfCards();
-    }
-
-    public Card giveCardFromHand(int indexOfCard){
-        return hand.giveCard(indexOfCard);
-    }
-
-    public String removePair(Card card, Card anotherCard) {
-        hand.removePair(card, anotherCard);
-        return "[" + card.getCardNotation() + ", " + anotherCard.getCardNotation() + "]";
     }
 
     public void displayHand() {
@@ -46,9 +47,6 @@ public class Player {
         System.out.println(sb);
     }
 
-    public void displayHiddenHand(){
-        System.out.println(name + ": " + hand.displayHiddenHand());
-    }
 
     public List<Card> getAllCards() {
         return hand.getAllCards();

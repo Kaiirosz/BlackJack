@@ -8,7 +8,7 @@ public class Card {
     private final String icon;
     private final String cardName;
 
-    public Card(Value value, Suit suit, String icon){
+    public Card(Value value, Suit suit, String icon) {
         this.value = value;
         this.suit = suit;
         this.icon = icon;
@@ -24,20 +24,25 @@ public class Card {
     }
 
 
-    public String getCardName(){
+    public String getCardName() {
         return cardName;
     }
 
-    public String getCardNotation(){
-        if (value.ordinal() + 1 > 10 || value.ordinal() == 0){
+    public int getBlackJackValue(int totalHandValue){
+        return value.getBlackJackValue(totalHandValue);
+    }
+
+    public String getCardNotation() {
+        if (value.ordinal() + 1 > 10 || value.ordinal() == 0) {
             String firstLetter = getValueName().split("")[0];
             return firstLetter + icon;
         }
         return value.ordinal() + 1 + icon;
     }
 
+
     @Override
-    public String toString(){
+    public String toString() {
         return getCardName() + ": " + getCardNotation();
     }
 
@@ -46,7 +51,7 @@ public class Card {
         if (this == obj) {
             return true;
         }
-        if (obj == null){
+        if (obj == null) {
             return false;
         }
         if (!(obj instanceof Card card)) {

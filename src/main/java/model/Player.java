@@ -21,10 +21,6 @@ public class Player {
         return money;
     }
 
-    public void setName(String name){
-        this.name = name;
-    }
-
     public void setMoney(int newMoney){
         money = newMoney;
     }
@@ -38,17 +34,12 @@ public class Player {
         return hand.getNumberOfCards();
     }
 
-    public void displayHand() {
-        StringBuilder sb = new StringBuilder();
-        List<Card> cardsInHand = hand.getAllCards();
-        for (int i = 0; i < cardsInHand.size(); i++) {
-            if (i == cardsInHand.size() - 1) {
-                sb.append(cardsInHand.get(i).getCardNotation());
-                continue;
-            }
-            sb.append(cardsInHand.get(i).getCardNotation()).append(", ");
-        }
-        System.out.println(sb);
+    public String getDisplayedHand() {
+        return hand.getDisplayedHand();
+    }
+
+    public int getHandTotalBlackJackValue(){
+        return hand.getTotalBlackJackValue();
     }
 
 

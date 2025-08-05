@@ -11,4 +11,23 @@ public class Dealer {
         this.cards = new ArrayList<>();
         this.deck = deck;
     }
+
+    public void shuffleDeck(){
+        deck.shuffleDeck();
+    }
+
+    public void dealCards(Player player){
+        player.addCardToHand(deck.getFirstCard());
+        player.addCardToHand(deck.getFirstCard());
+        cards.add(deck.getFirstCard());
+        cards.add(deck.getFirstCard());
+    }
+
+    public String getCards(){
+        return "[" + getFaceUpCardNotation() + ", ?]";
+    }
+
+    public String getFaceUpCardNotation(){
+        return cards.getFirst().getCardNotation();
+    }
 }

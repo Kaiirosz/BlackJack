@@ -1,10 +1,13 @@
 package logic;
 
 import io.GameIO;
+import model.Card;
 import model.Dealer;
 import model.Deck;
 import model.Player;
 import utils.GameUtils;
+
+import java.util.List;
 
 public class GameLogic {
     private Player player;
@@ -22,10 +25,12 @@ public class GameLogic {
         io.println("Blackjack");
         io.println("Enter your name to start the game.");
         String playerName = io.readLine();
-        Player player = new Player(playerName, 2500);
+        player = new Player(playerName, 2500);
         io.println("Game Start");
         io.println("--------------");
         int betMoney = betMoney(player);
+        startRound(betMoney);
+
     }
 
     public int betMoney(Player player){
@@ -45,6 +50,33 @@ public class GameLogic {
             break;
         }
         return betMoney;
+    }
+
+    public void startRound(int betMoney){
+        io.println("--------------");
+        io.println("Round Started");
+        io.println("The Dealer is shuffling the deck.");
+        dealer.shuffleDeck();
+        utils.pauseForEffect(1000);
+        io.println("The cards are being dealt");
+        utils.pauseForEffect(1000);
+        dealer.dealCards(player);
+        List<Card> playerCards = player.getAllCards();
+        io.println("You got the card " + playerCards.getFirst().getCardNotation() + "!!");
+        utils.pauseForEffect(1000);
+        io.println("You got the card " + playerCards.get(1).getCardNotation() + "!!");
+        utils.pauseForEffect(1000);
+        io.println("The Dealer's face up card is " + dealer.getFaceUpCardNotation());
+        utils.pauseForEffect(1000);
+        io.println("--------------");
+        io.println("Your cards: " + player.getDisplayedHand());
+        io.println("The Dealer's cards: " + dealer.getCards());
+        utils.pauseForEffect(2000);
+
+        io.println("What do you do now?");
+        io.println("1. Hit\n2. Stand");
+        String action = io.readLine();
+
     }
 
 

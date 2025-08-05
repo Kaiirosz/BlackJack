@@ -14,16 +14,32 @@ public class Hand {
         cards.add(card);
     }
 
-    public void displayHand() {
-        StringBuilder sb = new StringBuilder();
+    public String getDisplayedHand() {
+        StringBuilder sb = new StringBuilder("[");
         for (int i = 0; i < cards.size(); i++) {
             if (i == cards.size() - 1) {
-                sb.append(cards.get(i).getCardNotation());
+                sb.append(cards.get(i).getCardNotation()).append("]");
                 continue;
             }
             sb.append(cards.get(i).getCardNotation()).append(", ");
         }
-        System.out.println(sb);
+        return sb.toString();
+    }
+
+    public int getTotalBlackJackValue(){
+        int totalValue = 0;
+        List<Card> acesList= new ArrayList<>();
+        for (Card c : cards){
+            if (c.getValue().equals(Value.ACE)){
+                acesList.add(c);
+                continue;
+            }
+            totalValue += c.getBlackJackValue(totalValue);
+        }
+        for (Card ace: acesList){
+            totalValue += ace.getBlackJackValue(totalValue);
+        }
+        return totalValue;
     }
 
 

@@ -3,7 +3,7 @@ package model;
 import java.util.List;
 
 public class Player {
-    private final String name;
+    private String name;
     private int money;
     private final Hand hand;
 
@@ -19,6 +19,10 @@ public class Player {
 
     public int getMoney(){
         return money;
+    }
+
+    public void setName(String name){
+        this.name = name;
     }
 
     public void setMoney(int newMoney){

@@ -11,6 +11,11 @@ public class ConsoleIO implements GameIO {
     }
 
     @Override
+    public void printMoney(int money) {
+        System.out.println("Current Money: " + money);
+    }
+
+    @Override
     public String readLine() {
         return sc.nextLine();
     }

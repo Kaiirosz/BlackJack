@@ -3,6 +3,7 @@ package model;
 public enum Outcome {
     WIN(2),
     BLACKJACK(2.5),
+    PUSH(1),
     LOSE(0),
     BUST(0);
 

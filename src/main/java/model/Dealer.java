@@ -23,6 +23,10 @@ public class Dealer {
         cards.add(deck.getFirstCard());
     }
 
+    public Card giveCard(){
+        return deck.getFirstCard();
+    }
+
     public String getCards(){
         return "[" + getFaceUpCardNotation() + ", ?]";
     }
@@ -30,4 +34,40 @@ public class Dealer {
     public String getFaceUpCardNotation(){
         return cards.getFirst().getCardNotation();
     }
+
+    public String getFaceDownCardNotation(){
+        return cards.get(1).getCardNotation();
+    }
+
+    public String getLastCardNotation(){
+        return cards.getLast().getCardNotation();
+    }
+
+    public int getTotalBlackJackValue(){
+        int totalValue = 0;
+        List<Card> acesList= new ArrayList<>();
+        for (Card c : cards){
+            if (c.getValue().equals(Value.ACE)){
+                acesList.add(c);
+                continue;
+            }
+            totalValue += c.getBlackJackValue(totalValue);
+        }
+        for (Card ace: acesList){
+            totalValue += ace.getBlackJackValue(totalValue);
+        }
+        return totalValue;
+    }
+
+    public void hit(){
+        cards.add(deck.getFirstCard());
+    }
+
+    public void returnCardsToDeck(List<Card> playerCards){
+        deck.getAllCards().addAll(playerCards);
+        deck.getAllCards().addAll(cards);
+        playerCards.clear();
+        cards.clear();
+    }
+
 }

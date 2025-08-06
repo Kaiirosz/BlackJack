@@ -23,10 +23,6 @@ public class Deck  {
         return firstCard;
     }
 
-    public int getNumberOfCards(){
-        return cards.size();
-    }
-
 
     public void shuffleDeck(){
         Collections.shuffle(cards);
@@ -40,5 +36,9 @@ public class Deck  {
             addCard(new Card(values[i], Suit.SPADES,"♠"));
             addCard(new Card(values[i], Suit.CLOVERS,"♣"));
         }
+    }
+
+    public List<Card> getAllCards(){
+        return cards;
     }
 }

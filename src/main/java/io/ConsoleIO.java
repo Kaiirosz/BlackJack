@@ -12,7 +12,7 @@ public class ConsoleIO implements GameIO {
 
     @Override
     public void printMoney(int money) {
-        System.out.println("Current Money: " + money);
+        System.out.printf("Current Money: ₱%d%n", money / 100);
     }
 
     @Override

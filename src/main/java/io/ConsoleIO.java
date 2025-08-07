@@ -2,8 +2,8 @@ package io;
 
 import model.Card;
 import model.Dealer;
+import model.Outcome;
 import model.Player;
-
 import java.util.Scanner;
 
 public class ConsoleIO implements GameIO {
@@ -142,6 +142,30 @@ public class ConsoleIO implements GameIO {
     @Override
     public void printDealerBustsMessage() {
         println("Dealer Busts!");
+    }
+
+    @Override
+    public void displayOutcomeMessage(Outcome outcome, int betMoney) {
+        switch (outcome){
+            case BLACKJACK:
+                println("You won " + betMoney / 100 + "!!");
+                break;
+            case WIN:
+                println("You win!");
+                println("Winnings: " + betMoney / 100);
+                break;
+            case PUSH:
+                println("Push");
+                break;
+            case LOSE:
+                println("You lose!");
+                break;
+            case BUST:
+                println("Bust!");
+                println("You lose!");
+                break;
+            default: throw new IllegalArgumentException("Unknown Outcome");
+        }
     }
 
 }

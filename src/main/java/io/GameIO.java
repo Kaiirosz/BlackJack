@@ -2,6 +2,7 @@ package io;
 
 import model.Card;
 import model.Dealer;
+import model.Outcome;
 import model.Player;
 
 public interface GameIO {
@@ -43,4 +44,5 @@ public interface GameIO {
 
     void printDealerBustsMessage();
 
+    void displayOutcomeMessage(Outcome outcome, int betMoney);
 }

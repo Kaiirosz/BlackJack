@@ -21,8 +21,12 @@ public class Player {
         return money;
     }
 
-    public void setMoney(int newMoney){
-        money = newMoney;
+    public void addMoney(int addend){
+        money += addend;
+    }
+
+    public void subtractMoney(int subtrahend){
+        money-= subtrahend;
     }
 
 

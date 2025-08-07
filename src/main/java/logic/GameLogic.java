@@ -11,71 +11,92 @@ public class GameLogic {
     private Player player;
     private final Dealer dealer;
     private final GameIO io;
+    private final BetManager betManager;
     private final GameUtils utils;
 
     public GameLogic(GameIO io){
         dealer = new Dealer(new Deck());
         utils = new GameUtils();
         this.io = io;
+        betManager = new BetManager(this.io);
     }
 
     public void start(){
-        io.println("Blackjack");
-        io.println("Enter your name to start the game.");
-        String playerName = io.readLine();
+        io.displayGameTitle();
+        initializePlayer();
+        io.displayGameStartBanner();
+        continueGameUntilPlayerHasNoMoney();
+    }
+
+    private void initializePlayer(){
+        String playerName = io.askForPlayerName();
         player = new Player(playerName, 250000);
-        io.println("Game Start");
-        io.println("--------------");
+    }
+
+    private void continueGameUntilPlayerHasNoMoney(){
         do {
             int betMoney = betMoney();
             Outcome outcome = startRound();
             dealer.returnCardsToDeck(player.getAllCards());
             int betResult = processOutcome(outcome, betMoney);
+            RoundResult roundResult = new RoundResult(outcome, betResult);
             player.setMoney(player.getMoney() + betResult);
         }
         while (player.getMoney() > 0);
-
     }
 
-    public int betMoney(){
-        int playerMoney = player.getMoney();
-        int betMoney;
-        while (true) {
-            io.println("Enter the amount of money you want to bet:");
-            io.printMoney(playerMoney);
-            betMoney = io.readInt() * 100;
-            if (betMoney > playerMoney || betMoney < 0) {
-                io.println("Invalid amount of money, Try Again.");
-                continue;
-            }
-            player.setMoney(playerMoney - betMoney);
-            io.println(betMoney + " was put into the bet.");
-            io.printMoney(player.getMoney());
-            break;
-        }
-        return betMoney;
+    private int betMoney(){
+        return betManager.askAndPlaceBet(player);
     }
 
-    public Outcome startRound(){
-        io.println("--------------");
-        io.println("Round Started");
+    private Outcome startRound(){
+        io.displayRoundStart();
         dealerDeals();
-        utils.pauseForEffect(2000);
         if (checkForPlayerBlackjack()){
-            if (checkForDealerBlackjack()){
-                return Outcome.PUSH;
-            }
-            return Outcome.BLACKJACK;
+            return settleBlackJack();
         }
-        printCards();
+        io.printPlayerCards(player,dealer);
         return playerTurn();
     }
 
-    public Outcome playerTurn(){
+    private void dealerDeals(){
+        io.showDealerIsShufflingTheDeckMessage();
+        dealer.shuffleDeck();
+        utils.pauseForEffect(1000);
+        io.showCardsDealtMessage();
+        utils.pauseForEffect(1000);
+        dealer.dealCards(player);
+        List<Card> playerCards = player.getAllCards();
+        io.printAcquiredCardNotification(playerCards.getFirst());
+        utils.pauseForEffect(1000);
+        io.printAcquiredCardNotification(playerCards.get(1));
+        utils.pauseForEffect(1000);
+        io.printDealersFaceUpCardNotification(dealer.getFaceUpCard());
+        utils.pauseForEffect(2000);
+    }
+
+    private boolean checkForPlayerBlackjack(){
+        if (player.getHandTotalBlackJackValue() == 21){
+            io.printBlackjack();
+            return true;
+        }
+        return false;
+    }
+
+    private Outcome settleBlackJack(){
+        if (dealer.getTotalBlackJackValue() == 21){
+            utils.pauseForEffect(2000);
+            io.showDealerRevealingCardMessage();
+            utils.pauseForEffect(1000);
+            io.printDealersBlackjackPair(dealer.getFaceUpCard(), dealer.getFaceDownCard());
+            return Outcome.PUSH;
+        }
+        return Outcome.BLACKJACK;
+    }
+
+    private Outcome playerTurn(){
         while (true) {
-            io.println("What do you do now?");
-            io.println("1. Hit\n2. Stand");
-            String action = io.readLine();
+            String action = askForPlayerAction();
             if (action.equalsIgnoreCase("Hit")) {
                 playerHits();
                 if (player.getHandTotalBlackJackValue() > 21) {
@@ -94,78 +115,57 @@ public class GameLogic {
         }
     }
 
-    public void playerHits(){
-        Card cardHit = dealer.giveCard();
-        io.println("The Dealer gave you a card...");
-        utils.pauseForEffect(1000);
-        io.println("It's a " + cardHit.getCardNotation() + "!");
-        utils.pauseForEffect(1000);
-        player.addCardToHand(cardHit);
-        printCards();
+    private String askForPlayerAction(){
+        io.displayPlayerOptions();
+        return io.readLine();
     }
 
-    public Outcome playerStands(){
+    private void playerHits(){
+        Card cardHit = dealer.giveCard();
+        io.showDealerGivingCardMessage();
+        utils.pauseForEffect(1000);
+        io.printRevealedCardNotification(cardHit);
+        utils.pauseForEffect(1000);
+        player.addCardToHand(cardHit);
+        io.printPlayerCards(player, dealer);
+    }
+
+    private Outcome playerStands(){
         return dealerTurn();
     }
 
-    public void dealerDeals(){
-        io.println("The Dealer is shuffling the deck");
-        dealer.shuffleDeck();
-        utils.pauseForEffect(1000);
-        io.println("The cards are being dealt");
-        utils.pauseForEffect(1000);
-        dealer.dealCards(player);
-        List<Card> playerCards = player.getAllCards();
-        io.println("You got the card " + playerCards.getFirst().getCardNotation() + "!");
-        utils.pauseForEffect(1000);
-        io.println("You got the card " + playerCards.get(1).getCardNotation() + "!");
-        utils.pauseForEffect(1000);
-        io.println("The Dealer's face up card is " + dealer.getFaceUpCardNotation());
-    }
-
-    public boolean checkForPlayerBlackjack(){
-        if (player.getHandTotalBlackJackValue() == 21){
-            io.println("BLACKJACK!BLACKJACK!BLACKJACK!");
-            return true;
-        }
-        return false;
-    }
-
-    public boolean checkForDealerBlackjack(){
-        if (dealer.getTotalBlackJackValue() == 21){
-            utils.pauseForEffect(2000);
-            io.println("......");
-            io.println("The Dealer reveals their face down card!");
-            utils.pauseForEffect(1000);
-            io.println("The Dealers cards are: [" + dealer.getFaceUpCardNotation() + ", " + dealer.getFaceDownCardNotation() + "]!!");
-            return true;
-        }
-        return false;
-    }
-
-    public Outcome dealerTurn(){
-        io.println("The Dealer is revealing their face down card......");
-        utils.pauseForEffect(3000);
-        io.println("It's a " + dealer.getFaceDownCardNotation() + "!");
+    private Outcome dealerTurn(){
+        displayDealerInitialCardReveal();
         int dealersTotalValue = dealer.getTotalBlackJackValue();
         if (dealersTotalValue == 21){
             return Outcome.LOSE;
         }
-        while (dealersTotalValue < 17){
-            utils.pauseForEffect(1000);
-            io.println("The Dealer has decided to hit for another card");
-            dealer.hit();
-            utils.pauseForEffect(2000);
-            io.println("It's a " + dealer.getLastCardNotation() + "!");
-            dealersTotalValue = dealer.getTotalBlackJackValue();
-            io.println("Dealer's Value: " + dealersTotalValue);
-        }
+        dealersTotalValue = dealerHitsTillSeventeen(dealersTotalValue);
         return compareTotalBlackJackValues(dealersTotalValue);
     }
 
-    public Outcome compareTotalBlackJackValues(int dealersTotalValue){
+    private void displayDealerInitialCardReveal(){
+        io.showDealerRevealingCardMessage();
+        utils.pauseForEffect(3000);
+        io.printRevealedCardNotification(dealer.getFaceDownCard());
+    }
+
+    private int dealerHitsTillSeventeen(int dealersTotalValue){
+        while (dealersTotalValue < 17){
+            utils.pauseForEffect(1000);
+            io.showDealerHitsMessage();
+            dealer.hit();
+            utils.pauseForEffect(2000);
+            io.printRevealedCardNotification(dealer.getLastCard());
+            dealersTotalValue = dealer.getTotalBlackJackValue();
+            io.printDealersTotalValue(dealersTotalValue);
+        }
+        return dealersTotalValue;
+    }
+
+    private Outcome compareTotalBlackJackValues(int dealersTotalValue){
         if (dealersTotalValue > 21){
-            io.println("The Dealer busts!!");
+            io.printDealerBustsMessage();
             return Outcome.WIN;
         }
         int playersTotalValue = player.getHandTotalBlackJackValue();
@@ -178,15 +178,9 @@ public class GameLogic {
         return Outcome.LOSE;
     }
 
-    public void printCards(){
-        io.println("--------------");
-        io.println("Your cards: " + player.getDisplayedHand() + " = " + player.getHandTotalBlackJackValue());
-        io.println("The Dealer's cards: " + dealer.getCards());
-    }
-
-    public int processOutcome(Outcome outcome, int betMoney){
+    private int processOutcome(Outcome outcome, int betMoney){
         utils.pauseForEffect(1500);
-        BigDecimal multiplier = BigDecimal.valueOf(outcome.getMultiplier());
+        BigDecimal multiplier = BigDecimal.valueOf(2);
         BigDecimal winnings = multiplier.multiply(BigDecimal.valueOf(betMoney));
         betMoney = winnings.intValue();
         if (outcome.equals(Outcome.BLACKJACK)){
@@ -194,21 +188,20 @@ public class GameLogic {
         }
         else if (outcome.equals(Outcome.PUSH)){
             io.println("Push");
-            io.println("Bet money returned");
+            io.println("Bet money returned.");
         }
         else if (outcome.equals(Outcome.WIN)){
-            io.println("You win!!");
+            io.println("You win!");
             io.println("Winnings: " + betMoney / 100);
         }
         else if (outcome.equals(Outcome.LOSE)){
-            io.println("You lose!!");
+            io.println("You lose!");
         }
         else if (outcome.equals(Outcome.BUST)){
-            io.println("Bust!!");
-            io.println("You lose!!");
+            io.println("Bust!");
+            utils.pauseForEffect(1000);
+            io.println("You lose!");
         }
         return betMoney;
     }
-
-
 }

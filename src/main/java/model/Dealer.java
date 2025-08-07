@@ -28,19 +28,19 @@ public class Dealer {
     }
 
     public String getCards(){
-        return "[" + getFaceUpCardNotation() + ", ?]";
+        return "[" + getFaceUpCard().getCardNotation() + ", ?]";
     }
 
-    public String getFaceUpCardNotation(){
-        return cards.getFirst().getCardNotation();
+    public Card getFaceUpCard(){
+        return cards.getFirst();
     }
 
-    public String getFaceDownCardNotation(){
-        return cards.get(1).getCardNotation();
+    public Card getFaceDownCard(){
+        return cards.get(1);
     }
 
-    public String getLastCardNotation(){
-        return cards.getLast().getCardNotation();
+    public Card getLastCard(){
+        return cards.getLast();
     }
 
     public int getTotalBlackJackValue(){

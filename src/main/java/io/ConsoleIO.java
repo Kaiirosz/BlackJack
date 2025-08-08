@@ -45,7 +45,7 @@ public class ConsoleIO implements GameIO {
     @Override
     public String askForPlayerName() {
         println("Enter your name to start the game");
-        return sc.nextLine();
+        return readLine();
     }
 
     @Override
@@ -117,6 +117,11 @@ public class ConsoleIO implements GameIO {
     public void displayPlayerOptions() {
         println("What do you do now?");
         println("1. Hit\n2. Stand");
+    }
+
+    @Override
+    public void displayUnknownActionMessage(){
+        println("Unknown Action. Try Again.");
     }
 
     @Override

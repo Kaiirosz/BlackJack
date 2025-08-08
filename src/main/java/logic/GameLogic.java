@@ -35,9 +35,9 @@ public class GameLogic {
             int betMoney = betMoney();
             Round round = new Round(io, player, dealer, utils);
             Outcome outcome = round.startRound();
+            utils.pauseForEffect(1500);
             int betResult = betManager.settleBetOutcome(outcome, betMoney);
             player.addMoney(betResult);
-            utils.pauseForEffect(1500);
             io.displayOutcomeMessage(outcome, betResult);
             utils.pauseForEffect(2000);
             RoundResult roundResult = new RoundResult(outcome, betResult);

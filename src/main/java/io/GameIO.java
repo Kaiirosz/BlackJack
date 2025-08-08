@@ -35,6 +35,7 @@ public interface GameIO {
     void printPlayerCards(Player player, Dealer dealer);
 
     void displayPlayerOptions();
+    void displayUnknownActionMessage();
 
     void showDealerGivingCardMessage();
     void printRevealedCardNotification(Card hitCard);

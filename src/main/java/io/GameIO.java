@@ -37,7 +37,7 @@ public interface GameIO {
     void showDealerRevealingCardMessage();
     void printDealersBlackjackPair(Card faceUpCardNotation, Card faceDownCard);
 
-    void printEveryoneCards(PlayerManager playerManager, Dealer dealer);
+    void printAllCards(PlayerManager playerManager, Dealer dealer);
 
     void displayPlayerOptions();
     void displayUnknownActionMessage();

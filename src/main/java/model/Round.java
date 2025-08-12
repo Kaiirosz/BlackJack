@@ -24,17 +24,13 @@ public class Round {
 
 
     public RoundOutcome startRound() {
-        RoundOutcome roundOutcome;
         io.displayRoundStart();
         dealerDeals();
-        BlackjackEvaluator blackjackEvaluator = new BlackjackEvaluator(playerManager, dealer);
-        if (checkForPlayerBlackjack(blackjackEvaluator)){
-            playerOutcomeMap = blackjackEvaluator.settleBlackJack(playerOutcomeMap);
-            if (checkForDealerBlackjack(blackjackEvaluator)){
-                return roundOutcome = new RoundOutcome(playerOutcomeMap);
-            }
+        Optional<RoundOutcome> bjOutcome = handleBlackjackPhase();
+        if (bjOutcome.isPresent()){
+            return bjOutcome.get();
         }
-        io.printEveryoneCards(playerManager, dealer);
+        io.printAllCards(playerManager, dealer);
         humanPlayerTurn(playerManager.getHumanPlayer());
         for (Player ai: playerManager.getAIPlayers()){
             playAITurn(ai);
@@ -59,6 +55,17 @@ public class Round {
         }
         io.printDealersFaceUpCardNotification(dealer.getFaceUpCard());
         utils.pauseForEffect(1000);
+    }
+
+    private Optional<RoundOutcome> handleBlackjackPhase(){
+        BlackjackEvaluator blackjackEvaluator = new BlackjackEvaluator(playerManager, dealer);
+        if (checkForPlayerBlackjack(blackjackEvaluator)){
+            playerOutcomeMap = blackjackEvaluator.settleBlackJack(playerOutcomeMap);
+            if (checkForDealerBlackjack(blackjackEvaluator)){
+                return Optional.of(new RoundOutcome(playerOutcomeMap));
+            }
+        }
+        return Optional.empty();
     }
 
     private boolean checkForPlayerBlackjack(BlackjackEvaluator blackjackEvaluator) {

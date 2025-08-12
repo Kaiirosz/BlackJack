@@ -134,7 +134,7 @@ public class ConsoleIO implements GameIO {
     }
 
     @Override
-    public void printEveryoneCards(PlayerManager playerManager, Dealer dealer) {
+    public void printAllCards(PlayerManager playerManager, Dealer dealer) {
         Player humanPlayer = playerManager.getHumanPlayer();
         println("--------------");
         println("Your cards: " + humanPlayer.getDisplayedHand() + " = " + humanPlayer.getHandTotalBlackJackValue() + "\n");

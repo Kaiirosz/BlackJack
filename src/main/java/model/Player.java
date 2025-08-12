@@ -1,6 +1,5 @@
 package model;
 
-import logic.TurnStrategy;
 
 import java.util.List;
 import java.util.Objects;
@@ -10,13 +9,11 @@ public class Player {
     private int money;
     private final Hand hand;
     private final boolean isHuman;
-    private final TurnStrategy turnStrategy;
 
-    public Player(String name, int money, boolean isHuman, TurnStrategy turnStrategy) {
+    public Player(String name, int money, boolean isHuman) {
         this.name = name;
         this.money = money;
         this.isHuman = isHuman;
-        this.turnStrategy = turnStrategy;
         hand = new Hand();
     }
 
@@ -28,12 +25,8 @@ public class Player {
         return money;
     }
 
-    public boolean getIsHuman(){
+    public boolean getIsHuman() {
         return isHuman;
-    }
-
-    public TurnStrategy getTurnStrategy() {
-        return turnStrategy;
     }
 
     public void addMoney(int addend){

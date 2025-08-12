@@ -1,9 +1,12 @@
 package io;
 
+import logic.PlayerManager;
 import model.Card;
 import model.Dealer;
 import model.Outcome;
 import model.Player;
+
+import java.util.List;
 
 public interface GameIO {
 
@@ -16,23 +19,25 @@ public interface GameIO {
     void displayGameStartBanner();
 
     String askForPlayerName();
+    int askForNumberOfAIPlayers();
 
     int askForBetAmount(int playerBalance);
     void showInvalidBetMessage();
     void showBetWasMadeMessage(int bet);
+    void showAIBetMadeMessage(Player ai, int aiBet);
 
     void displayRoundStart();
     void showDealerIsShufflingTheDeckMessage();
     void showCardsDealtMessage();
-    void printAcquiredCardNotification(Card acquiredCard);
+    void printAcquiredCardNotification(Card firstCard, Card secondCard, Player player);
     void printDealersFaceUpCardNotification(Card faceUpCard);
 
-    void printBlackjack();
+    void printBlackjackNotification(Player p);
 
     void showDealerRevealingCardMessage();
     void printDealersBlackjackPair(Card faceUpCardNotation, Card faceDownCard);
 
-    void printPlayerCards(Player player, Dealer dealer);
+    void printEveryoneCards(PlayerManager playerManager, Dealer dealer);
 
     void displayPlayerOptions();
     void displayUnknownActionMessage();

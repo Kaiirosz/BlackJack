@@ -23,7 +23,6 @@ public class Deck  {
         return firstCard;
     }
 
-
     public void shuffleDeck(){
         Collections.shuffle(cards);
     }

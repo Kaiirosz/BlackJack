@@ -1,5 +1,7 @@
 package model;
 
+import logic.PlayerManager;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,9 +18,11 @@ public class Dealer {
         deck.shuffleDeck();
     }
 
-    public void dealCards(Player player){
-        player.addCardToHand(deck.getFirstCard());
-        player.addCardToHand(deck.getFirstCard());
+    public void dealCards(PlayerManager playerManager){
+        for (Player player : playerManager.getAllPlayers()){
+            player.addCardToHand(deck.getFirstCard());
+            player.addCardToHand(deck.getFirstCard());
+        }
         cards.add(deck.getFirstCard());
         cards.add(deck.getFirstCard());
     }

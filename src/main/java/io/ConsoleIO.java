@@ -1,9 +1,12 @@
 package io;
 
+import logic.PlayerManager;
 import model.Card;
 import model.Dealer;
 import model.Outcome;
 import model.Player;
+
+import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleIO implements GameIO {
@@ -49,6 +52,12 @@ public class ConsoleIO implements GameIO {
     }
 
     @Override
+    public int askForNumberOfAIPlayers() {
+        println("How many other AI players do you want with you? (0-6)");
+        return readInt();
+    }
+
+    @Override
     public int askForBetAmount(int playerBalance) {
         println("Enter the amount of money you want to bet: ");
         printMoney(playerBalance);
@@ -63,6 +72,11 @@ public class ConsoleIO implements GameIO {
     @Override
     public void showBetWasMadeMessage(int bet){
         println("₱" + bet + " was put into the bet");
+    }
+
+    @Override
+    public void showAIBetMadeMessage(Player ai, int aiBet){
+        println(ai.getName() + " has put ₱" + aiBet + " into the bet");
     }
 
     @Override
@@ -82,8 +96,14 @@ public class ConsoleIO implements GameIO {
     }
 
     @Override
-    public void printAcquiredCardNotification(Card acquiredCard) {
-        println("You got the card " + acquiredCard.getCardNotation() + "!");
+    public void printAcquiredCardNotification(Card firstCard, Card secondCard, Player player) {
+        boolean isHuman = player.getIsHuman();
+        if (isHuman) {
+            println("You got the cards: [" + firstCard.getCardNotation() + ", " + secondCard.getCardNotation() + "]!");
+        }
+        else {
+            println(player.getName() +  " got the cards: [" + firstCard.getCardNotation() + ", " + secondCard.getCardNotation() + "]!");
+        }
     }
 
     @Override
@@ -92,8 +112,14 @@ public class ConsoleIO implements GameIO {
     }
 
     @Override
-    public void printBlackjack() {
-        println("BLACKJACK!BLACKJACK!BLACKJACK!");
+    public void printBlackjackNotification(Player p) {
+        boolean isHuman = p.getIsHuman();
+        if (isHuman){
+            println("You hit Blackjack!!");
+        }
+        else {
+            println(p.getName() +  " has hit Blackjack!!");
+        }
     }
 
     @Override
@@ -103,13 +129,18 @@ public class ConsoleIO implements GameIO {
 
     @Override
     public void printDealersBlackjackPair(Card faceUpCard, Card faceDownCard) {
-        println("The Dealers cards are: [" + faceUpCard.getCardNotation() + ", " + faceDownCard.getCardNotation() + "]!!");
+        println("The Dealers cards are: [" + faceUpCard.getCardNotation() + ", " + faceDownCard.getCardNotation() + "]!");
+        println("The Dealer also has Blackjack!");
     }
 
     @Override
-    public void printPlayerCards(Player player, Dealer dealer) {
+    public void printEveryoneCards(PlayerManager playerManager, Dealer dealer) {
+        Player humanPlayer = playerManager.getHumanPlayer();
         println("--------------");
-        println("Your cards: " + player.getDisplayedHand() + " = " + player.getHandTotalBlackJackValue());
+        println("Your cards: " + humanPlayer.getDisplayedHand() + " = " + humanPlayer.getHandTotalBlackJackValue() + "\n");
+        for (Player p : playerManager.getAIPlayers()){
+            println(p.getName() + "'s cards: " + p.getDisplayedHand() + "=" + p.getHandTotalBlackJackValue() + "\n");
+        }
         println("The Dealer's cards: " + dealer.getCards());
     }
 

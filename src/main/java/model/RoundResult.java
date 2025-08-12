@@ -1,19 +1,13 @@
 package model;
 
+import java.util.Map;
+
 public class RoundResult {
-    private final Outcome outcome;
-    private final int betResult;
+    private final Map<Player, Integer> playerWinningsMap;
 
-    public RoundResult(Outcome outcome, int betResult) {
-        this.outcome = outcome;
-        this.betResult = betResult;
+
+    public RoundResult(Map<Player, Integer> playerWinningsMap) {
+        this.playerWinningsMap = playerWinningsMap;
     }
 
-    public Outcome getOutcome() {
-        return outcome;
-    }
-
-    public int getBetResult(){
-        return betResult;
-    }
 }

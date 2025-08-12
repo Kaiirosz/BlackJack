@@ -5,28 +5,40 @@ import model.Outcome;
 import model.Player;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class BetManager {
     private final GameIO io;
+    private final Map<Player, Integer> betsMap;
 
     public BetManager(GameIO io) {
         this.io = io;
+        this.betsMap = new HashMap<>();
     }
 
-    public int askAndPlaceBet(Player player) {
-        while (true) {
-            int bet = io.askForBetAmount(player.getMoney());
-            int betInCents = bet * 100;
-            if (isValidBet(player, betInCents)) {
-                player.subtractMoney(betInCents);
-                io.showBetWasMadeMessage(bet);
-                return betInCents;
+
+    public void placePlayerBet(Player humanPlayer, int betAmount){
+        humanPlayer.subtractMoney(betAmount);
+        betsMap.put(humanPlayer, betAmount);
+    }
+
+    public int placeAIBet(Player aiPlayer, int betAmount){
+            int aiMoney = aiPlayer.getMoney();
+            if (betAmount > aiMoney){
+                aiPlayer.subtractMoney(aiMoney);
+                betsMap.put(aiPlayer, aiMoney);
+                return aiMoney;
             }
-            io.showInvalidBetMessage();
-        }
+            else {
+                aiPlayer.subtractMoney(betAmount);
+                betsMap.put(aiPlayer, betAmount);
+                return betAmount;
+            }
     }
 
-    private boolean isValidBet(Player player, int betInCents) {
+    public boolean isValidBet(Player player, int betInCents) {
         int playerBalance = player.getMoney();
         return betInCents <= playerBalance && betInCents > 0;
     }

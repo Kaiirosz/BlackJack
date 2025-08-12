@@ -1,15 +1,22 @@
 package model;
 
+import logic.TurnStrategy;
+
 import java.util.List;
+import java.util.Objects;
 
 public class Player {
     private final String name;
     private int money;
     private final Hand hand;
+    private final boolean isHuman;
+    private final TurnStrategy turnStrategy;
 
-    public Player(String name, int money) {
+    public Player(String name, int money, boolean isHuman, TurnStrategy turnStrategy) {
         this.name = name;
         this.money = money;
+        this.isHuman = isHuman;
+        this.turnStrategy = turnStrategy;
         hand = new Hand();
     }
 
@@ -19,6 +26,14 @@ public class Player {
 
     public int getMoney(){
         return money;
+    }
+
+    public boolean getIsHuman(){
+        return isHuman;
+    }
+
+    public TurnStrategy getTurnStrategy() {
+        return turnStrategy;
     }
 
     public void addMoney(int addend){
@@ -54,6 +69,13 @@ public class Player {
     @Override
     public String toString() {
         return name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Player player)) return false;
+        return money == player.money && isHuman == player.isHuman && Objects.equals(name, player.name) && Objects.equals(hand, player.hand);
     }
 
 }

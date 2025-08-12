@@ -17,8 +17,8 @@ public class GameLogic {
     public GameLogic(GameIO io){
         this.io = io;
         dealer = new Dealer(new Deck());
-        playerManager = new PlayerManager(this.io, new ArrayList<>());
-        betManager = new BetManager(this.io);
+        playerManager = new PlayerManager(new ArrayList<>());
+        betManager = new BetManager();
         utils = new GameUtils();
     }
 
@@ -30,8 +30,10 @@ public class GameLogic {
     }
 
     private void initializePlayers(){
-        playerManager.initializeHumanPlayer();
-        playerManager.initializeAIPlayers();
+        String humanName = io.askForPlayerName();
+        playerManager.initializeHumanPlayer(humanName);
+        int numberOfAIPlayers = io.askForNumberOfAIPlayers();
+        playerManager.initializeAIPlayers(numberOfAIPlayers);
     }
 
     private void continueGameUntilPlayerHasNoMoney(){

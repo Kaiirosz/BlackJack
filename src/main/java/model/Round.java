@@ -28,17 +28,9 @@ public class Round {
         io.displayRoundStart();
         dealerDeals();
         BlackjackEvaluator blackjackEvaluator = new BlackjackEvaluator(playerManager, dealer);
-        List<Player> playersWithBJ = blackjackEvaluator.getPlayersWithBlackjack();
-        if (!playersWithBJ.isEmpty()) {
-            for (Player p: playersWithBJ){
-                io.printBlackjackNotification(p);
-                utils.pauseForEffect(1000);
-            }
+        if (checkForPlayerBlackjack(blackjackEvaluator)){
             playerOutcomeMap = blackjackEvaluator.settleBlackJack(playerOutcomeMap);
-            if (blackjackEvaluator.checkForDealerBlackjack()){
-                io.showDealerRevealingCardMessage();
-                utils.pauseForEffect(1000);
-                io.printDealersBlackjackPair(dealer.getFaceUpCard(), dealer.getFaceDownCard());
+            if (checkForDealerBlackjack(blackjackEvaluator)){
                 return roundOutcome = new RoundOutcome(playerOutcomeMap);
             }
         }
@@ -68,6 +60,30 @@ public class Round {
         io.printDealersFaceUpCardNotification(dealer.getFaceUpCard());
         utils.pauseForEffect(1000);
     }
+
+    private boolean checkForPlayerBlackjack(BlackjackEvaluator blackjackEvaluator) {
+        boolean aPlayerHasBlackjack = false;
+        List<Player> playersWithBJ = blackjackEvaluator.getPlayersWithBlackjack();
+        if (!playersWithBJ.isEmpty()) {
+            aPlayerHasBlackjack = true;
+            for (Player p : playersWithBJ) {
+                io.printBlackjackNotification(p);
+                utils.pauseForEffect(1000);
+            }
+        }
+        return aPlayerHasBlackjack;
+    }
+
+    private boolean checkForDealerBlackjack(BlackjackEvaluator blackjackEvaluator){
+        boolean dealerHasBlackjack = checkForPlayerBlackjack(blackjackEvaluator);
+        if (dealerHasBlackjack){
+            io.showDealerRevealingCardMessage();
+            utils.pauseForEffect(1000);
+            io.printDealersBlackjackPair(dealer.getFaceUpCard(), dealer.getFaceDownCard());
+        }
+        return dealerHasBlackjack;
+    }
+
 
     private void humanPlayerTurn(Player player) {
         while (true) {

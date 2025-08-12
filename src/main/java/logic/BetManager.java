@@ -10,11 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 public class BetManager {
-    private final GameIO io;
     private final Map<Player, Integer> betsMap;
 
-    public BetManager(GameIO io) {
-        this.io = io;
+    public BetManager() {
         this.betsMap = new HashMap<>();
     }
 
@@ -22,6 +20,10 @@ public class BetManager {
     public void placePlayerBet(Player humanPlayer, int betAmount){
         humanPlayer.subtractMoney(betAmount);
         betsMap.put(humanPlayer, betAmount);
+    }
+
+    public int getPlayerBet(Player player){
+        return betsMap.get(player);
     }
 
     public int placeAIBet(Player aiPlayer, int betAmount){

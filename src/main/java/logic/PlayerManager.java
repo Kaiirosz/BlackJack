@@ -9,29 +9,24 @@ import java.util.NoSuchElementException;
 
 public class PlayerManager {
 
-    private final GameIO io;
     private final List<Player> players;
     private static final int STARTING_BALANCE = 250000;
     private Player humanPlayer;
 
-    public PlayerManager(GameIO io, List<Player> players){
-        this.io = io;
+    public PlayerManager(List<Player> players){
         this.players = players;
     }
 
 
-    public void initializeHumanPlayer() {
-        String playerName = io.askForPlayerName();
-        humanPlayer = new Player(playerName, STARTING_BALANCE, true, new PlayerTurnStrategy());
+    public void initializeHumanPlayer(String humanName) {
+        humanPlayer = new Player(humanName, STARTING_BALANCE, true);
         players.add(humanPlayer);
-
     }
 
-    public void initializeAIPlayers() {
-        int numberOfAIPlayers = io.askForNumberOfAIPlayers();
+    public void initializeAIPlayers(int numberOfAIPlayers) {
         for (int i = 0; i < numberOfAIPlayers; i++){
             String aiPlayerName = "Player " + i + 2;
-            players.add(new Player(aiPlayerName, STARTING_BALANCE, false, new AITurnStrategy()));
+            players.add(new Player(aiPlayerName, STARTING_BALANCE, false));
         }
     }
 

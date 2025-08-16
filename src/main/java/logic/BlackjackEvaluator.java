@@ -1,26 +1,28 @@
 package logic;
 
-import model.Dealer;
-import model.Outcome;
-import model.Player;
+import model.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class BlackjackEvaluator {
-    private PlayerManager playerManager;
-    private Dealer dealer;
+    private final PlayerManager playerManager;
+    private final Dealer dealer;
+    private final BetManager betManager;
+    private static final int BLACKJACK_VALUE = 21;
 
-    public BlackjackEvaluator(PlayerManager playerManager, Dealer dealer){
-        this.playerManager = playerManager;
-        this.dealer = dealer;
+    public BlackjackEvaluator(GameContext gameContext) {
+        this.playerManager = gameContext.getPlayerManager();
+        this.dealer = gameContext.getDealer();
+        this.betManager = gameContext.getBetManager();
     }
 
-    public List<Player> getPlayersWithBlackjack(){
+    public List<Player> getPlayersWithBlackjack() {
         List<Player> playersWithBlackjackList = new ArrayList<>();
-        for (Player p : playerManager.getAllPlayers()){
-            if (p.getHandTotalBlackJackValue() == 21){
+        for (Player p : playerManager.getAllPlayers()) {
+            Hand initialHand = p.getFirstHand();
+            if (initialHand.getTotalBlackJackValue() == BLACKJACK_VALUE) {
                 playersWithBlackjackList.add(p);
             }
         }
@@ -28,24 +30,31 @@ public class BlackjackEvaluator {
     }
 
     public boolean checkForDealerBlackjack() {
-        return dealer.getTotalBlackJackValue() == 21;
+        return dealer.getTotalBlackJackValue() == BLACKJACK_VALUE;
     }
 
-    public Map<Player, Outcome> settleBlackJack(Map<Player, Outcome> playerOutcomeMap) {
+    public RoundOutcome settleBlackJack() {
         boolean dealerHasBlackjack = checkForDealerBlackjack();
+        RoundOutcome roundOutcome = new RoundOutcome();
         for (Player p : playerManager.getAllPlayers()) {
+            Hand initialHand = p.getFirstHand();
+            int totalBetResult;
             if (dealerHasBlackjack) {
-                if (p.getHandTotalBlackJackValue() == 21) {
-                    playerOutcomeMap.put(p, Outcome.PUSH);
+                if (initialHand.getTotalBlackJackValue() == BLACKJACK_VALUE) {
+                    initialHand.setHandOutcome(Outcome.PUSH);
                 } else {
-                    playerOutcomeMap.put(p, Outcome.LOSE);
+                    initialHand.setHandOutcome(Outcome.LOSE);
                 }
+                totalBetResult = betManager.settleBetOutcome(initialHand.getHandOutcome(), initialHand.getBet());
+                roundOutcome.addPlayerOutcome(p, totalBetResult);
                 continue;
             }
-            if (p.getHandTotalBlackJackValue() == 21) {
-                playerOutcomeMap.put(p, Outcome.BLACKJACK);
+            if (initialHand.getTotalBlackJackValue() == BLACKJACK_VALUE) {
+                initialHand.setHandOutcome(Outcome.BLACKJACK);
+                totalBetResult = betManager.settleBetOutcome(initialHand.getHandOutcome(), initialHand.getBet());
+                roundOutcome.addPlayerOutcome(p, totalBetResult);
             }
         }
-        return playerOutcomeMap;
+        return roundOutcome;
     }
 }

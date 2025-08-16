@@ -20,8 +20,9 @@ public class Dealer {
 
     public void dealCards(PlayerManager playerManager){
         for (Player player : playerManager.getAllPlayers()){
-            player.addCardToHand(deck.getFirstCard());
-            player.addCardToHand(deck.getFirstCard());
+            Hand initialHand = player.getFirstHand();
+            player.addCardToHand(deck.getFirstCard(), initialHand);
+            player.addCardToHand(deck.getFirstCard(), initialHand);
         }
         cards.add(deck.getFirstCard());
         cards.add(deck.getFirstCard());

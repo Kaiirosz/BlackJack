@@ -1,20 +1,21 @@
 package model;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class Player {
     private final String name;
     private int money;
-    private final Hand hand;
+    private final List<Hand> handList;
     private final boolean isHuman;
 
     public Player(String name, int money, boolean isHuman) {
         this.name = name;
         this.money = money;
         this.isHuman = isHuman;
-        hand = new Hand();
+        handList = new ArrayList<>();
     }
 
     public String getName() {
@@ -29,6 +30,18 @@ public class Player {
         return isHuman;
     }
 
+    public List<Hand> getHandList(){
+        return handList;
+    }
+
+    public void addHand(Hand hand){
+        handList.add(hand);
+    }
+
+    public int getHandBet(Hand handToGetBetFrom){
+        return handToGetBetFrom.getBet();
+    }
+
     public void addMoney(int addend){
         money += addend;
     }
@@ -38,25 +51,32 @@ public class Player {
     }
 
 
-    public void addCardToHand(Card card) {
-        hand.addCard(card);
+    public void addCardToHand(Card card, Hand handToAddCard) {
+        handToAddCard.addCard(card);
     }
 
-    public int getHandSize() {
-        return hand.getNumberOfCards();
+    public Hand getFirstHand(){
+        return handList.getFirst();
     }
 
-    public String getDisplayedHand() {
-        return hand.getDisplayedHand();
+    public String getDisplayedHand(Hand handToDisplay) {
+        return handToDisplay.getDisplayedHand();
     }
 
-    public int getHandTotalBlackJackValue(){
+    public int getHandTotalBlackJackValue(Hand hand){
         return hand.getTotalBlackJackValue();
     }
 
-
-    public List<Card> getAllCards() {
-        return hand.getAllCards();
+    public String getAllHandsAndOutcomes(){
+        StringBuilder handsAndOutcomes = new StringBuilder();
+        for (int i = 0; i < handList.size(); i++){
+            String handAndOutcome = handList.get(i).getHandAndOutcome();
+            handsAndOutcomes.append(handAndOutcome);
+            if (i < handList.size() - 1){
+                handsAndOutcomes.append("\n");
+            }
+        }
+        return handsAndOutcomes.toString();
     }
 
     @Override

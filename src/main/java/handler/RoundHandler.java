@@ -1,25 +1,30 @@
-package model;
+package handler;
 
 import io.GameIO;
+import logic.BetManager;
 import logic.BlackjackEvaluator;
+import logic.GameContext;
 import logic.PlayerManager;
+import model.*;
 import utils.GameUtils;
 
 import java.util.*;
 
-public class Round {
-    private final GameIO io;
+public class RoundHandler {
+
     private final PlayerManager playerManager;
     private final Dealer dealer;
+    private final BetManager betManager;
+    private RoundOutcome roundOutcome;
+    private final GameIO io;
     private final GameUtils utils;
-    private Map<Player, Outcome> playerOutcomeMap;
 
-    public Round(GameIO io, PlayerManager playerManager, Dealer dealer, GameUtils utils) {
+    public RoundHandler(GameContext gameContext, GameIO io, GameUtils utils) {
         this.io = io;
         this.playerManager = playerManager;
+        this.betManager = betManager;
         this.dealer = dealer;
         this.utils = utils;
-        playerOutcomeMap = new HashMap<>();
     }
 
 
@@ -48,8 +53,8 @@ public class Round {
         utils.pauseForEffect(1000);
         dealer.dealCards(playerManager);
         for (Player p : playerManager.getAllPlayers()) {
-            Card firstCard = p.getAllCards().getFirst();
-            Card secondCard = p.getAllCards().get(1);
+            Card firstCard = p.getFirstHand().getCard(0);
+            Card secondCard = p.getFirstHand().getCard(1);
             io.printAcquiredCardNotification(firstCard, secondCard, p);
             utils.pauseForEffect(1000);
         }
@@ -58,11 +63,11 @@ public class Round {
     }
 
     private Optional<RoundOutcome> handleBlackjackPhase(){
-        BlackjackEvaluator blackjackEvaluator = new BlackjackEvaluator(playerManager, dealer);
+        BlackjackEvaluator blackjackEvaluator = new BlackjackEvaluator(ga);
         if (checkForPlayerBlackjack(blackjackEvaluator)){
-            playerOutcomeMap = blackjackEvaluator.settleBlackJack(playerOutcomeMap);
+            roundOutcome = blackjackEvaluator.settleBlackJack();
             if (checkForDealerBlackjack(blackjackEvaluator)){
-                return Optional.of(new RoundOutcome(playerOutcomeMap));
+                return Optional.of(roundOutcome);
             }
         }
         return Optional.empty();

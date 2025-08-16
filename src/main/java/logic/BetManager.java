@@ -1,41 +1,35 @@
 package logic;
 
-import io.GameIO;
+import model.Hand;
 import model.Outcome;
 import model.Player;
-
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class BetManager {
-    private final Map<Player, Integer> betsMap;
-
-    public BetManager() {
-        this.betsMap = new HashMap<>();
-    }
-
 
     public void placePlayerBet(Player humanPlayer, int betAmount){
-        humanPlayer.subtractMoney(betAmount);
-        betsMap.put(humanPlayer, betAmount);
+        Hand hand = new Hand();
+        int betAmountInCents = betAmount * 100;
+        hand.setBet(betAmountInCents);
+        humanPlayer.subtractMoney(betAmountInCents);
+        humanPlayer.addHand(hand);
     }
 
-    public int getPlayerBet(Player player){
-        return betsMap.get(player);
-    }
 
-    public int placeAIBet(Player aiPlayer, int betAmount){
+    public int placeAIBet(Player aiPlayer, int betAmount){ //case where AI has no money to bet TBD
+            Hand aiHand = new Hand();
             int aiMoney = aiPlayer.getMoney();
-            if (betAmount > aiMoney){
+            int betAmountInCents = betAmount * 100;
+            if (betAmountInCents > aiMoney){
                 aiPlayer.subtractMoney(aiMoney);
-                betsMap.put(aiPlayer, aiMoney);
-                return aiMoney;
+                aiHand.setBet(aiMoney);
+                aiPlayer.addHand(aiHand);
+                return aiMoney / 100;
             }
             else {
-                aiPlayer.subtractMoney(betAmount);
-                betsMap.put(aiPlayer, betAmount);
+                aiPlayer.subtractMoney(betAmountInCents);
+                aiHand.setBet(betAmountInCents);
+                aiPlayer.addHand(aiHand);
                 return betAmount;
             }
     }
@@ -57,4 +51,5 @@ public class BetManager {
         }
         return bigDecimalBetMoney.multiply(multiplier).intValue();
     }
+
 }

@@ -1,10 +1,7 @@
 package io;
 
 import logic.PlayerManager;
-import model.Card;
-import model.Dealer;
-import model.Outcome;
-import model.Player;
+import model.*;
 
 import java.util.List;
 import java.util.Scanner;
@@ -136,10 +133,12 @@ public class ConsoleIO implements GameIO {
     @Override
     public void printAllCards(PlayerManager playerManager, Dealer dealer) {
         Player humanPlayer = playerManager.getHumanPlayer();
+        Hand initialPlayerHand = humanPlayer.getFirstHand();
         println("--------------");
-        println("Your cards: " + humanPlayer.getDisplayedHand() + " = " + humanPlayer.getHandTotalBlackJackValue() + "\n");
+        println("Your cards: " + initialPlayerHand.getDisplayedHand() + " = " + initialPlayerHand.getTotalBlackJackValue() + "\n");
         for (Player p : playerManager.getAIPlayers()){
-            println(p.getName() + "'s cards: " + p.getDisplayedHand() + "=" + p.getHandTotalBlackJackValue() + "\n");
+            Hand initialAIHand = p.getFirstHand();
+            println(p.getName() + "'s cards: " + initialAIHand.getDisplayedHand() + "=" + initialAIHand.getTotalBlackJackValue() + "\n");
         }
         println("The Dealer's cards: " + dealer.getCards());
     }

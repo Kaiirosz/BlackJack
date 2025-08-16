@@ -24,9 +24,11 @@ public class PlayerManager {
     }
 
     public void initializeAIPlayers(int numberOfAIPlayers) {
+        int playerNumber = 2;
         for (int i = 0; i < numberOfAIPlayers; i++){
-            String aiPlayerName = "Player " + i + 2;
+            String aiPlayerName = "Player " + playerNumber;
             players.add(new Player(aiPlayerName, STARTING_BALANCE, false));
+            playerNumber++;
         }
     }
 

@@ -1,5 +1,6 @@
 package logic;
 
+import handler.RoundHandler;
 import io.GameIO;
 import model.*;
 import utils.GameUtils;
@@ -11,15 +12,17 @@ public class GameLogic {
     private final Dealer dealer;
     private final PlayerManager playerManager;
     private final BetManager betManager;
+    private final GameContext gameContext;
     private final GameIO io;
     private final GameUtils utils;
 
     public GameLogic(GameIO io){
-        this.io = io;
-        dealer = new Dealer(new Deck());
-        playerManager = new PlayerManager(new ArrayList<>());
-        betManager = new BetManager();
+        gameContext = new GameContext();
+        playerManager = gameContext.getPlayerManager();
+        dealer = gameContext.getDealer();
+        betManager = gameContext.getBetManager();
         utils = new GameUtils();
+        this.io = io;
     }
 
     public void start(){
@@ -39,8 +42,8 @@ public class GameLogic {
     private void continueGameUntilPlayerHasNoMoney(){
         do {
             betMoney();
-            Round round = new Round(io, playerManager, dealer, utils);
-            RoundOutcome outcome = round.startRound();
+            RoundHandler roundHandler = new RoundHandler(gameContext, io, utils);
+            RoundOutcome outcome = roundHandler.startRound();
             utils.pauseForEffect(1500);
             int betResult = betManager.settleBetOutcome(outcome, betMoney);
             player.addMoney(betResult);

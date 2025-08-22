@@ -19,7 +19,7 @@ public class Dealer {
     }
 
     public void dealCards(PlayerManager playerManager){
-        for (Player player : playerManager.getAllPlayers()){
+        for (Player player : playerManager.getAllPlayersInRound()){
             Hand initialHand = player.getFirstHand();
             player.addCardToHand(deck.getFirstCard(), initialHand);
             player.addCardToHand(deck.getFirstCard(), initialHand);
@@ -68,10 +68,18 @@ public class Dealer {
         cards.add(deck.getFirstCard());
     }
 
-    public void returnCardsToDeck(List<Card> playerCards){
-        deck.getAllCards().addAll(playerCards);
+    public void returnCardsToDeck(PlayerManager playerManager){
+        for (Player p : playerManager.getAllPlayers()){
+            List<Hand> playerHands = p.getHandList();
+            for (Hand hand : playerHands){
+                List<Card> playerCards = hand.getCards();
+//                hand.setHandOutcome(null);
+                deck.getAllCards().addAll(playerCards);
+                playerCards.clear();
+            }
+            playerHands.clear();
+        }
         deck.getAllCards().addAll(cards);
-        playerCards.clear();
         cards.clear();
     }
 

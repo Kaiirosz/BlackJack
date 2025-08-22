@@ -20,6 +20,7 @@ public interface GameIO {
 
     String askForPlayerName();
     int askForNumberOfAIPlayers();
+    void showInvalidNumberOfAIPlayersMessage();
 
     int askForBetAmount(int playerBalance);
     void showInvalidBetMessage();
@@ -39,16 +40,24 @@ public interface GameIO {
 
     void printAllCards(PlayerManager playerManager, Dealer dealer);
 
+    void showPlayerTurn(String name);
     void displayPlayerOptions();
     void displayUnknownActionMessage();
 
     void showDealerGivingCardMessage();
     void printRevealedCardNotification(Card hitCard);
 
+    void printAIHitsNotification(Player ai);
+    void printAICards(Player ai);
+    void printStandNotification();
+    void printPlayerBustNotification();
+
     void showDealerHitsMessage();
     void printDealersTotalValue(int dealersTotalValue);
 
     void printDealerBustsMessage();
 
+    void printRoundSummaryNotification();
+    void printPlayerRoundSummary(String summary);
     void displayOutcomeMessage(Outcome outcome, int betMoney);
 }

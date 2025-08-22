@@ -4,7 +4,6 @@ import model.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class BlackjackEvaluator {
     private final PlayerManager playerManager;
@@ -20,7 +19,7 @@ public class BlackjackEvaluator {
 
     public List<Player> getPlayersWithBlackjack() {
         List<Player> playersWithBlackjackList = new ArrayList<>();
-        for (Player p : playerManager.getAllPlayers()) {
+        for (Player p : playerManager.getAllPlayersInRound()) {
             Hand initialHand = p.getFirstHand();
             if (initialHand.getTotalBlackJackValue() == BLACKJACK_VALUE) {
                 playersWithBlackjackList.add(p);
@@ -36,11 +35,12 @@ public class BlackjackEvaluator {
     public RoundOutcome settleBlackJack() {
         boolean dealerHasBlackjack = checkForDealerBlackjack();
         RoundOutcome roundOutcome = new RoundOutcome();
-        for (Player p : playerManager.getAllPlayers()) {
+        int totalBetResult;
+        for (Player p : playerManager.getAllPlayersInRound()) {
             Hand initialHand = p.getFirstHand();
-            int totalBetResult;
+            boolean initialHandHasBJ = initialHand.getTotalBlackJackValue() == BLACKJACK_VALUE;
             if (dealerHasBlackjack) {
-                if (initialHand.getTotalBlackJackValue() == BLACKJACK_VALUE) {
+                if (initialHandHasBJ) {
                     initialHand.setHandOutcome(Outcome.PUSH);
                 } else {
                     initialHand.setHandOutcome(Outcome.LOSE);
@@ -49,7 +49,7 @@ public class BlackjackEvaluator {
                 roundOutcome.addPlayerOutcome(p, totalBetResult);
                 continue;
             }
-            if (initialHand.getTotalBlackJackValue() == BLACKJACK_VALUE) {
+            if (initialHandHasBJ) {
                 initialHand.setHandOutcome(Outcome.BLACKJACK);
                 totalBetResult = betManager.settleBetOutcome(initialHand.getHandOutcome(), initialHand.getBet());
                 roundOutcome.addPlayerOutcome(p, totalBetResult);

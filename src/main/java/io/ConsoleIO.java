@@ -55,6 +55,11 @@ public class ConsoleIO implements GameIO {
     }
 
     @Override
+    public void showInvalidNumberOfAIPlayersMessage(){
+        println("Invalid amount of players. Try Again.");
+    }
+
+    @Override
     public int askForBetAmount(int playerBalance) {
         println("Enter the amount of money you want to bet: ");
         printMoney(playerBalance);
@@ -134,13 +139,17 @@ public class ConsoleIO implements GameIO {
     public void printAllCards(PlayerManager playerManager, Dealer dealer) {
         Player humanPlayer = playerManager.getHumanPlayer();
         Hand initialPlayerHand = humanPlayer.getFirstHand();
-        println("--------------");
-        println("Your cards: " + initialPlayerHand.getDisplayedHand() + " = " + initialPlayerHand.getTotalBlackJackValue() + "\n");
+        println("-------------------------------------------");
+        println("Your cards: " + initialPlayerHand.getDisplayedHand() + " = " + initialPlayerHand.getTotalBlackJackValue());
         for (Player p : playerManager.getAIPlayers()){
-            Hand initialAIHand = p.getFirstHand();
-            println(p.getName() + "'s cards: " + initialAIHand.getDisplayedHand() + "=" + initialAIHand.getTotalBlackJackValue() + "\n");
+            printAICards(p);
         }
         println("The Dealer's cards: " + dealer.getCards());
+    }
+
+    @Override
+    public void showPlayerTurn(String name){
+        println("\n" + name + "'s turn");
     }
 
     @Override
@@ -156,12 +165,33 @@ public class ConsoleIO implements GameIO {
 
     @Override
     public void showDealerGivingCardMessage() {
-        println("The Dealer gave you a card...");
+        println("The Dealer gave a card...");
     }
 
     @Override
     public void printRevealedCardNotification(Card hitCard) {
         println("It's a " + hitCard.getCardNotation() + "!");
+    }
+
+
+    @Override
+    public void printAIHitsNotification(Player ai){
+        println(ai.getName() + " chose to hit!");
+    }
+    @Override
+    public void printAICards(Player p){
+        Hand initialAIHand = p.getFirstHand();
+        println(p.getName() + "'s cards: " + initialAIHand.getDisplayedHand() + " = " + initialAIHand.getTotalBlackJackValue());
+    }
+
+    @Override
+    public void printStandNotification(){
+        println("Stand");
+    }
+
+    @Override
+    public void printPlayerBustNotification(){
+        println("Bust!!");
     }
 
     @Override
@@ -177,6 +207,16 @@ public class ConsoleIO implements GameIO {
     @Override
     public void printDealerBustsMessage() {
         println("Dealer Busts!");
+    }
+
+    @Override
+    public void printRoundSummaryNotification(){
+        println("\n" + "ROUND SUMMARY: \n");
+    }
+
+    @Override
+    public void printPlayerRoundSummary(String summary){
+        println(summary);
     }
 
     @Override

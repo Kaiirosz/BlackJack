@@ -72,6 +72,10 @@ public class Hand {
         return bet;
     }
 
+    public List<Card> getCards(){
+        return cards;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

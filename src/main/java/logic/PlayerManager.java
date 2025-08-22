@@ -1,6 +1,5 @@
 package logic;
 
-import io.GameIO;
 import model.Player;
 
 import java.util.ArrayList;
@@ -12,10 +11,12 @@ public class PlayerManager {
     private final List<Player> players;
     private static final int STARTING_BALANCE = 250000;
     private Player humanPlayer;
+    private List<Player> playersInRound;
 
     public PlayerManager(List<Player> players){
         this.players = players;
     }
+
 
 
     public void initializeHumanPlayer(String humanName) {
@@ -32,21 +33,35 @@ public class PlayerManager {
         }
     }
 
+    public void checkForEligiblePlayers(){
+        playersInRound = new ArrayList<>(players);
+    }
+
+
     public void removePlayerFromRound(Player p){
-        players.remove(p);
+        playersInRound.remove(p);
     }
 
     public Player getHumanPlayer(){
-        if (humanPlayer == null){
+        if (!playersInRound.contains(humanPlayer)){
             throw new NoSuchElementException("There is no human player in the game");
         }
         return humanPlayer;
     }
 
+
     public List<Player> getAIPlayers(){
-        List<Player> aiPlayers = new ArrayList<>(players);
+        List<Player> aiPlayers = new ArrayList<>(playersInRound);
         aiPlayers.remove(humanPlayer);
         return aiPlayers;
+    }
+
+    public boolean isEmpty(){
+        return playersInRound.isEmpty();
+    }
+
+    public List<Player> getAllPlayersInRound(){
+        return playersInRound;
     }
 
     public List<Player> getAllPlayers(){

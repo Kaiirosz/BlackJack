@@ -7,13 +7,13 @@ import java.util.Objects;
 
 public class Player {
     private final String name;
-    private int money;
+    private int balance;
     private final List<Hand> handList;
     private final boolean isHuman;
 
-    public Player(String name, int money, boolean isHuman) {
+    public Player(String name, int balance, boolean isHuman) {
         this.name = name;
-        this.money = money;
+        this.balance = balance;
         this.isHuman = isHuman;
         handList = new ArrayList<>();
     }
@@ -22,8 +22,8 @@ public class Player {
         return name;
     }
 
-    public int getMoney(){
-        return money;
+    public int getBalance(){
+        return balance;
     }
 
     public boolean getIsHuman() {
@@ -43,11 +43,11 @@ public class Player {
     }
 
     public void addMoney(int addend){
-        money += addend;
+        balance += addend;
     }
 
     public void subtractMoney(int subtrahend){
-        money-= subtrahend;
+        balance -= subtrahend;
     }
 
 
@@ -88,7 +88,12 @@ public class Player {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Player player)) return false;
-        return money == player.money && isHuman == player.isHuman && Objects.equals(name, player.name) && Objects.equals(hand, player.hand);
+        return Objects.equals(name, player.name) &&
+                isHuman == player.isHuman;
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, isHuman); //must be consistent with equals
+    }
 }

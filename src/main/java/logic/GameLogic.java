@@ -5,12 +5,12 @@ import io.GameIO;
 import model.*;
 import utils.GameUtils;
 
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class GameLogic {
-    private final Dealer dealer;
     private final PlayerManager playerManager;
+    private final Dealer dealer;
     private final BetManager betManager;
     private final GameContext gameContext;
     private final GameIO io;
@@ -18,10 +18,10 @@ public class GameLogic {
 
     public GameLogic(GameIO io){
         gameContext = new GameContext();
+        utils = new GameUtils();
         playerManager = gameContext.getPlayerManager();
         dealer = gameContext.getDealer();
         betManager = gameContext.getBetManager();
-        utils = new GameUtils();
         this.io = io;
     }
 
@@ -36,29 +36,43 @@ public class GameLogic {
         String humanName = io.askForPlayerName();
         playerManager.initializeHumanPlayer(humanName);
         int numberOfAIPlayers = io.askForNumberOfAIPlayers();
+        while (numberOfAIPlayers > 6 || numberOfAIPlayers < 0){
+            numberOfAIPlayers = io.askForNumberOfAIPlayers();
+        }
         playerManager.initializeAIPlayers(numberOfAIPlayers);
     }
 
     private void continueGameUntilPlayerHasNoMoney(){
+        Player humanPlayer;
         do {
+            playerManager.checkForEligiblePlayers();
+            humanPlayer = playerManager.getHumanPlayer();
             betMoney();
             RoundHandler roundHandler = new RoundHandler(gameContext, io, utils);
             RoundOutcome outcome = roundHandler.startRound();
             utils.pauseForEffect(1500);
-            int betResult = betManager.settleBetOutcome(outcome, betMoney);
-            player.addMoney(betResult);
-            io.displayOutcomeMessage(outcome, betResult);
+            io.printRoundSummaryNotification();
+            for (Player p : outcome.getPlayerRoundSummaryMap().keySet()){
+                int totalBetResult = outcome.getPlayerTotalBetResult(p);
+                p.addMoney(totalBetResult);
+                String summary = outcome.getPlayerRoundSummary(p).getSummary();
+                io.printPlayerRoundSummary(summary);
+            }
+            dealer.returnCardsToDeck(playerManager);
+            removeAIPlayersOutOfMoney();
+            outcome.clear();
             utils.pauseForEffect(2000);
         }
-        while (player.getMoney() > 0);
+        while (humanPlayer.getBalance() > 0);
     }
 
     private void betMoney(){
         Player humanPlayer = playerManager.getHumanPlayer();
+        int playerBalance = humanPlayer.getBalance();
         int bet;
         while (true){
-            bet = io.askForBetAmount(humanPlayer.getMoney());
-            if (betManager.isValidBet(humanPlayer, bet)){
+            bet = io.askForBetAmount(playerBalance);
+            if (betManager.isValidBet(playerBalance, bet)){
                 betManager.placePlayerBet(humanPlayer, bet);
                 io.showBetWasMadeMessage(bet);
                 break;
@@ -70,6 +84,16 @@ public class GameLogic {
             int aiBet = betManager.placeAIBet(ai, bet);
             io.showAIBetMadeMessage(ai, aiBet);
             utils.pauseForEffect(500);
+        }
+    }
+
+    public void removeAIPlayersOutOfMoney(){
+        Iterator<Player> iterator = playerManager.getAIPlayers().iterator();
+        while (iterator.hasNext()){
+            Player ai = iterator.next();
+            if (ai.getBalance() <= 0){
+                iterator.remove();
+            }
         }
     }
 

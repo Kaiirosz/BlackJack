@@ -2,12 +2,12 @@ package logic;
 
 import model.*;
 
-public class PlayerTurnLogic {
+public class PlayerTurnLogic implements TurnLogic {
     private final PlayerManager playerManager;
     private final Dealer dealer;
     private final BetManager betManager;
     private final RoundOutcome roundOutcome;
-    private final Player humanPlayer;
+    private Card hitCard;
     private static final int BLACKJACK_VALUE = 21;
 
 
@@ -16,21 +16,38 @@ public class PlayerTurnLogic {
         this.dealer = gameContext.getDealer();
         this.betManager = gameContext.getBetManager();
         this.roundOutcome = roundOutcome;
-        humanPlayer = playerManager.getHumanPlayer();
     }
 
-    public boolean hit(){
-        Card cardHit = dealer.giveCard();
+    public TurnResult hit(Player humanPlayer){
         Hand firstHand = humanPlayer.getFirstHand();
-        humanPlayer.addCardToHand(cardHit, firstHand);
+        setHitCard(dealer.giveCard());
+        humanPlayer.addCardToHand(hitCard, firstHand);
         if (firstHand.getTotalBlackJackValue() > BLACKJACK_VALUE) {
-            int betMoney = humanPlayer.getHandBet(firstHand);
-            int betOutcome = betManager.settleBetOutcome(Outcome.BUST, betMoney);
-            roundOutcome.addPlayerOutcome(humanPlayer, betOutcome);
-            playerManager.removePlayerFromRound(humanPlayer);
-            return false;
-        } else if (player.getHandTotalBlackJackValue() == BLACKJACK_VALUE) {
-            return true;
+            firstHand.setHandOutcome(Outcome.BUST);
+            return TurnResult.BUST;
+        } else if (firstHand.getTotalBlackJackValue() == BLACKJACK_VALUE) {
+            return stand(humanPlayer);
         }
+        return TurnResult.CONTINUE;
+    }
+
+    public void removePlayerFromRound(Player humanPlayer){
+        Hand firstHand = humanPlayer.getFirstHand();
+        int betMoney = humanPlayer.getHandBet(firstHand);
+        int betOutcome = betManager.settleBetOutcome(firstHand.getHandOutcome(), betMoney);
+        roundOutcome.addPlayerOutcome(humanPlayer, betOutcome);
+        playerManager.removePlayerFromRound(humanPlayer);
+    }
+
+    public Card getHitCard(){
+        return hitCard;
+    }
+
+    public void setHitCard(Card hitCard){
+        this.hitCard = hitCard;
+    }
+
+    public TurnResult stand(Player player){
+        return TurnResult.STAND;
     }
 }

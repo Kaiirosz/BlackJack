@@ -18,7 +18,7 @@ public class BetManager {
 
     public int placeAIBet(Player aiPlayer, int betAmount){ //case where AI has no money to bet TBD
             Hand aiHand = new Hand();
-            int aiMoney = aiPlayer.getMoney();
+            int aiMoney = aiPlayer.getBalance();
             int betAmountInCents = betAmount * 100;
             if (betAmountInCents > aiMoney){
                 aiPlayer.subtractMoney(aiMoney);
@@ -34,8 +34,8 @@ public class BetManager {
             }
     }
 
-    public boolean isValidBet(Player player, int betInCents) {
-        int playerBalance = player.getMoney();
+    public boolean isValidBet(int playerBalance, int bet) {
+        int betInCents = bet * 100;
         return betInCents <= playerBalance && betInCents > 0;
     }
 

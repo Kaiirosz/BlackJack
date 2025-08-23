@@ -45,6 +45,7 @@ public class GameLogic {
     private void continueGameUntilPlayerHasNoMoney(){
         Player humanPlayer;
         do {
+            playerManager.removeAIPlayersOutOfMoney();
             playerManager.checkForEligiblePlayers();
             humanPlayer = playerManager.getHumanPlayer();
             betMoney();
@@ -59,11 +60,11 @@ public class GameLogic {
                 io.printPlayerRoundSummary(summary);
             }
             dealer.returnCardsToDeck(playerManager);
-            removeAIPlayersOutOfMoney();
             outcome.clear();
             utils.pauseForEffect(2000);
         }
         while (humanPlayer.getBalance() > 0);
+        io.showGameOverMessage();
     }
 
     private void betMoney(){
@@ -79,7 +80,7 @@ public class GameLogic {
             }
             io.showInvalidBetMessage();
         }
-        List<Player> aiPlayers = playerManager.getAIPlayers();
+        List<Player> aiPlayers = playerManager.getAIPlayersInRound();
         for (Player ai: aiPlayers){
             int aiBet = betManager.placeAIBet(ai, bet);
             io.showAIBetMadeMessage(ai, aiBet);
@@ -87,14 +88,6 @@ public class GameLogic {
         }
     }
 
-    public void removeAIPlayersOutOfMoney(){
-        Iterator<Player> iterator = playerManager.getAIPlayers().iterator();
-        while (iterator.hasNext()){
-            Player ai = iterator.next();
-            if (ai.getBalance() <= 0){
-                iterator.remove();
-            }
-        }
-    }
+
 
 }

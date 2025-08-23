@@ -19,7 +19,7 @@ public class AITurnLogic implements TurnLogic {
         this.dealer = gameContext.getDealer();
         this.betManager = gameContext.getBetManager();
         this.roundOutcome = roundOutcome;
-        aiPlayers = playerManager.getAIPlayers();
+        aiPlayers = playerManager.getAIPlayersInRound();
     }
 
     public Action decideAction(Player ai) {

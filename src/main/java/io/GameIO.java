@@ -59,5 +59,6 @@ public interface GameIO {
 
     void printRoundSummaryNotification();
     void printPlayerRoundSummary(String summary);
+    void showGameOverMessage();
     void displayOutcomeMessage(Outcome outcome, int betMoney);
 }

@@ -3,6 +3,7 @@ package logic;
 import model.Player;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -20,7 +21,7 @@ public class PlayerManager {
 
 
     public void initializeHumanPlayer(String humanName) {
-        humanPlayer = new Player(humanName, STARTING_BALANCE, true);
+        humanPlayer = new Player(humanName, 500000, true);
         players.add(humanPlayer);
     }
 
@@ -42,18 +43,29 @@ public class PlayerManager {
         playersInRound.remove(p);
     }
 
+
     public Player getHumanPlayer(){
         if (!playersInRound.contains(humanPlayer)){
-            throw new NoSuchElementException("There is no human player in the game");
+            throw new NoSuchElementException("There is no human player in the round");
         }
         return humanPlayer;
     }
 
 
-    public List<Player> getAIPlayers(){
+    public List<Player> getAIPlayersInRound(){
         List<Player> aiPlayers = new ArrayList<>(playersInRound);
         aiPlayers.remove(humanPlayer);
         return aiPlayers;
+    }
+
+    public void removeAIPlayersOutOfMoney(){
+        Iterator<Player> it = players.iterator();
+        while (it.hasNext()){
+            Player p = it.next();
+            if (p.getBalance() <= 0 && !p.getIsHuman()){
+                it.remove();
+            }
+        }
     }
 
     public boolean isEmpty(){

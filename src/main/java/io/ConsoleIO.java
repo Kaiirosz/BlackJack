@@ -3,7 +3,6 @@ package io;
 import logic.PlayerManager;
 import model.*;
 
-import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleIO implements GameIO {
@@ -141,7 +140,7 @@ public class ConsoleIO implements GameIO {
         Hand initialPlayerHand = humanPlayer.getFirstHand();
         println("-------------------------------------------");
         println("Your cards: " + initialPlayerHand.getDisplayedHand() + " = " + initialPlayerHand.getTotalBlackJackValue());
-        for (Player p : playerManager.getAIPlayers()){
+        for (Player p : playerManager.getAIPlayersInRound()){
             printAICards(p);
         }
         println("The Dealer's cards: " + dealer.getCards());
@@ -217,6 +216,11 @@ public class ConsoleIO implements GameIO {
     @Override
     public void printPlayerRoundSummary(String summary){
         println(summary);
+    }
+
+    @Override
+    public void showGameOverMessage(){
+        println("Game Over");
     }
 
     @Override

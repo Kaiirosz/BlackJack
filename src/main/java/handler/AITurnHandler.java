@@ -11,7 +11,7 @@ public class AITurnHandler implements TurnHandler{
     public void handleTurn(GameContext gameContext, RoundOutcome roundOutcome, GameIO io, GameUtils utils) {
         PlayerManager playerManager = gameContext.getPlayerManager();
         AITurnLogic aiTurnLogic = new AITurnLogic(gameContext, roundOutcome);
-            for (Player ai : playerManager.getAIPlayers()) {
+            for (Player ai : playerManager.getAIPlayersInRound()) {
                 io.showPlayerTurn(ai.getName());
                 utils.pauseForEffect(1000);
                 TurnResult turnResult = TurnResult.CONTINUE;

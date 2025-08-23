@@ -132,7 +132,7 @@ public class RoundHandler {
         return true;
     }
     private boolean checkIfAIInRound(){
-        return !playerManager.getAIPlayers().isEmpty();
+        return !playerManager.getAIPlayersInRound().isEmpty();
     }
     private boolean checkIfNoPlayersInRound() {
         return playerManager.isEmpty();

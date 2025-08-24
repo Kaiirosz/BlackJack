@@ -22,10 +22,10 @@ public class AITurnLogic implements TurnLogic {
         aiPlayers = playerManager.getAIPlayersInRound();
     }
 
-    public Action decideAction(Player ai) {
+    public Action decideAction(Player ai, boolean isFirstAction) {
         HandStrength dealerHandStrength = getDealerHandStrength();
         HandStrength aiHandStrength = getAIHandStrength(ai);
-        AIDecisionTable aiDecisionTable = new AIDecisionTable(aiHandStrength, dealerHandStrength);
+        AIDecisionTable aiDecisionTable = new AIDecisionTable(aiHandStrength, dealerHandStrength, isFirstAction, ai.canAffordDoubleDown());
         return aiDecisionTable.getAction();
     }
 
@@ -52,6 +52,22 @@ public class AITurnLogic implements TurnLogic {
         return TurnResult.CONTINUE;
     }
 
+    public TurnResult stand(Player ai){
+        return TurnResult.STAND;
+    }
+
+    public TurnResult doubleDown(Player ai){
+        Hand firstHand = ai.getFirstHand();
+        betManager.doubleDownBet(ai, firstHand);
+        setHitCard(dealer.giveCard());
+        ai.addCardToHand(hitCard, firstHand);
+        if (firstHand.getTotalBlackJackValue() > BLACKJACK_VALUE) {
+            firstHand.setHandOutcome(Outcome.BUST);
+            return TurnResult.BUST;
+        }
+        return stand(ai);
+    }
+
     public void removePlayerFromRound(Player ai){
         Hand firstHand = ai.getFirstHand();
         int betMoney = ai.getHandBet(firstHand);
@@ -68,7 +84,4 @@ public class AITurnLogic implements TurnLogic {
         this.hitCard = hitCard;
     }
 
-    public TurnResult stand(Player ai){
-        return TurnResult.STAND;
-    }
 }

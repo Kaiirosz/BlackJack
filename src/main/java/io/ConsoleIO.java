@@ -187,6 +187,12 @@ public class ConsoleIO implements GameIO {
     public void printAIHitsNotification(Player ai){
         println(ai.getName() + " chose to hit!");
     }
+
+    @Override
+    public void printAIDoublesDownNotification(Player ai){
+        println(ai.getName() + " has decided to double down!");
+    }
+
     @Override
     public void printAICards(Player p){
         Hand initialAIHand = p.getFirstHand();

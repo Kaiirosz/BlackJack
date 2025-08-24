@@ -34,7 +34,7 @@ public class PlayerManager {
         }
     }
 
-    public void checkForEligiblePlayers(){
+    public void initializePlayersInRound(){
         playersInRound = new ArrayList<>(players);
     }
 

@@ -14,9 +14,10 @@ public class AITurnHandler implements TurnHandler{
             for (Player ai : playerManager.getAIPlayersInRound()) {
                 io.showPlayerTurn(ai.getName());
                 utils.pauseForEffect(1000);
+                boolean isFirstAction = true;
                 TurnResult turnResult = TurnResult.CONTINUE;
                 while (turnResult.equals(TurnResult.CONTINUE)) {
-                    Action action = aiTurnLogic.decideAction(ai);
+                    Action action = aiTurnLogic.decideAction(ai, isFirstAction);
                     switch (action) {
                         case HIT:
                             io.printAIHitsNotification(ai);
@@ -32,7 +33,18 @@ public class AITurnHandler implements TurnHandler{
                             io.printStandNotification();
                             turnResult = aiTurnLogic.stand(ai);
                             break;
+                        case DOUBLE_DOWN:
+                            io.printAIDoublesDownNotification(ai);
+                            turnResult = aiTurnLogic.doubleDown(ai);
+                            Card cardHit2 = aiTurnLogic.getHitCard();
+                            io.showDealerGivingCardMessage();
+                            utils.pauseForEffect(1000);
+                            io.printRevealedCardNotification(cardHit2);
+                            utils.pauseForEffect(1000);
+                            io.printAICards(ai);
+                            break;
                     }
+                    isFirstAction = false;
                 }
                 if (turnResult.equals(TurnResult.BUST)) {
                     io.printPlayerBustNotification();

@@ -5,7 +5,6 @@ import io.GameIO;
 import model.*;
 import utils.GameUtils;
 
-import java.util.Iterator;
 import java.util.List;
 
 public class GameLogic {
@@ -46,7 +45,7 @@ public class GameLogic {
         Player humanPlayer;
         do {
             playerManager.removeAIPlayersOutOfMoney();
-            playerManager.checkForEligiblePlayers();
+            playerManager.initializePlayersInRound();
             humanPlayer = playerManager.getHumanPlayer();
             betMoney();
             RoundHandler roundHandler = new RoundHandler(gameContext, io, utils);

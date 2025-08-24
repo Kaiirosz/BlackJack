@@ -15,6 +15,11 @@ public class BetManager {
         humanPlayer.addHand(hand);
     }
 
+    public void doubleDownBet(Player player, Hand handToDoubleDown){
+        int betInCents = handToDoubleDown.getBet();
+        handToDoubleDown.setBet(betInCents * 2);
+        player.subtractMoney(betInCents);
+    }
 
     public int placeAIBet(Player aiPlayer, int betAmount){ //case where AI has no money to bet TBD
             Hand aiHand = new Hand();

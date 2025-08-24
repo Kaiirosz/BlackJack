@@ -38,13 +38,13 @@ public class RoundHandler {
             return bjOutcome.get();
         }
         io.printAllCards(playerManager, dealer);
-        if (checkIfHumanIsInRound()){
+        if (playerManager.checkIfHumanIsInRound()){
             humanPlayerTurn();
         }
-        if (checkIfAIInRound()){
+        if (playerManager.checkIfAnAIStillInRound()){
             aiPlayersTurn();
         }
-        if (checkIfNoPlayersInRound()) {
+        if (playerManager.getAllPlayersInRound().isEmpty()) {
             return roundOutcome;
         }
         dealerTurn();
@@ -69,7 +69,7 @@ public class RoundHandler {
         utils.pauseForEffect(1000);
     }
 
-    private Optional<RoundOutcome> handleBlackjackPhase() {
+    private Optional<RoundOutcome> handleBlackjackPhase() { //issue with bj peeking
         BlackjackEvaluator blackjackEvaluator = new BlackjackEvaluator(gameContext);
         if (checkForPlayerBlackjack(blackjackEvaluator)) {
             roundOutcome = blackjackEvaluator.settleBlackJack();
@@ -122,21 +122,7 @@ public class RoundHandler {
         dealerTurnHandler.handleTurn(gameContext, roundOutcome, io, utils);
     }
 
-    private boolean checkIfHumanIsInRound(){
-        try {
-            playerManager.getHumanPlayer();
-        }
-        catch (Exception e){
-            return false;
-        }
-        return true;
-    }
-    private boolean checkIfAIInRound(){
-        return !playerManager.getAIPlayersInRound().isEmpty();
-    }
-    private boolean checkIfNoPlayersInRound() {
-        return playerManager.isEmpty();
-    }
+
 
     private void settleRound() {
         utils.pauseForEffect(1000);

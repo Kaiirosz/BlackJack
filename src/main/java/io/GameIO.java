@@ -6,8 +6,6 @@ import model.Dealer;
 import model.Outcome;
 import model.Player;
 
-import java.util.List;
-
 public interface GameIO {
 
     void println(String message);
@@ -41,8 +39,8 @@ public interface GameIO {
     void printAllCards(PlayerManager playerManager, Dealer dealer);
 
     void showPlayerTurn(String name);
-    void displayPlayerOptions();
-    void displayUnknownActionMessage();
+    void displayPlayerOptions(boolean isFirstAction, boolean canAffordDoubleDown);
+    void displayInvalidActionMessage();
 
     void showDealerGivingCardMessage();
     void printRevealedCardNotification(Card hitCard);

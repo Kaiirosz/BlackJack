@@ -45,10 +45,14 @@ public class PlayerManager {
 
 
     public Player getHumanPlayer(){
-        if (!playersInRound.contains(humanPlayer)){
+        if (!checkIfHumanIsInRound()){
             throw new NoSuchElementException("There is no human player in the round");
         }
         return humanPlayer;
+    }
+
+    public boolean checkIfHumanIsInRound(){
+        return playersInRound.contains(humanPlayer);
     }
 
 
@@ -56,6 +60,10 @@ public class PlayerManager {
         List<Player> aiPlayers = new ArrayList<>(playersInRound);
         aiPlayers.remove(humanPlayer);
         return aiPlayers;
+    }
+
+    public boolean checkIfAnAIStillInRound(){
+        return !getAIPlayersInRound().isEmpty();
     }
 
     public void removeAIPlayersOutOfMoney(){

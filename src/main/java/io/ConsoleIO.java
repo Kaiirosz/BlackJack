@@ -136,10 +136,12 @@ public class ConsoleIO implements GameIO {
 
     @Override
     public void printAllCards(PlayerManager playerManager, Dealer dealer) {
-        Player humanPlayer = playerManager.getHumanPlayer();
-        Hand initialPlayerHand = humanPlayer.getFirstHand();
         println("-------------------------------------------");
-        println("Your cards: " + initialPlayerHand.getDisplayedHand() + " = " + initialPlayerHand.getTotalBlackJackValue());
+        if (playerManager.checkIfHumanIsInRound()){
+            Player humanPlayer = playerManager.getHumanPlayer();
+            Hand initialPlayerHand = humanPlayer.getFirstHand();
+            println("Your cards: " + initialPlayerHand.getDisplayedHand() + " = " + initialPlayerHand.getTotalBlackJackValue());
+        }
         for (Player p : playerManager.getAIPlayersInRound()){
             printAICards(p);
         }
@@ -152,14 +154,22 @@ public class ConsoleIO implements GameIO {
     }
 
     @Override
-    public void displayPlayerOptions() {
+    public void displayPlayerOptions(boolean isFirstAction, boolean canAffordDoubleDown) {
         println("What do you do now?");
+        if (isFirstAction && canAffordDoubleDown){
+            println("""
+                    1. Hit
+                    2. Stand
+                    3. Double Down""");
+            return;
+        }
         println("1. Hit\n2. Stand");
     }
 
+
     @Override
-    public void displayUnknownActionMessage(){
-        println("Unknown Action. Try Again.");
+    public void displayInvalidActionMessage(){
+        println("Invalid Action. Try Again.");
     }
 
     @Override
@@ -169,7 +179,7 @@ public class ConsoleIO implements GameIO {
 
     @Override
     public void printRevealedCardNotification(Card hitCard) {
-        println("It's a " + hitCard.getCardNotation() + "!");
+        println("It's " + hitCard.getCardNotation() + "!");
     }
 
 

@@ -31,6 +31,22 @@ public class PlayerTurnLogic implements TurnLogic {
         return TurnResult.CONTINUE;
     }
 
+    public TurnResult stand(Player player){
+        return TurnResult.STAND;
+    }
+
+    public TurnResult doubleDown(Player humanPlayer){
+        Hand firstHand = humanPlayer.getFirstHand();
+        betManager.doubleDownBet(humanPlayer, firstHand);
+        setHitCard(dealer.giveCard());
+        humanPlayer.addCardToHand(hitCard, firstHand);
+        if (firstHand.getTotalBlackJackValue() > BLACKJACK_VALUE) {
+            firstHand.setHandOutcome(Outcome.BUST);
+            return TurnResult.BUST;
+        }
+        return stand(humanPlayer);
+    }
+
     public void removePlayerFromRound(Player humanPlayer){
         Hand firstHand = humanPlayer.getFirstHand();
         int betMoney = humanPlayer.getHandBet(firstHand);
@@ -47,7 +63,5 @@ public class PlayerTurnLogic implements TurnLogic {
         this.hitCard = hitCard;
     }
 
-    public TurnResult stand(Player player){
-        return TurnResult.STAND;
-    }
+
 }

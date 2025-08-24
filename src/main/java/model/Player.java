@@ -79,6 +79,12 @@ public class Player {
         return handsAndOutcomes.toString();
     }
 
+    public boolean canAffordDoubleDown(){
+        int doubleDownAmount = getHandBet(getFirstHand());
+        return balance >= doubleDownAmount;
+    }
+
+
     @Override
     public String toString() {
         return name;

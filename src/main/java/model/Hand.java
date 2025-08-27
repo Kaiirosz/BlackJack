@@ -8,9 +8,11 @@ public class Hand {
     private final List<Card> cards;
     private Outcome handOutcome;
     private int bet;
+    private boolean isUnresolved;
 
     public Hand(){
         cards = new ArrayList<>();
+        isUnresolved = true;
     }
 
     public void addCard(Card card){
@@ -30,6 +32,20 @@ public class Hand {
 
     public void setHandOutcome(Outcome handOutcome){
         this.handOutcome = handOutcome;
+    }
+
+    public boolean isUnresolved() {
+        return isUnresolved;
+    }
+
+    public void setUnresolved(boolean unresolved) {
+        isUnresolved = unresolved;
+    }
+
+    public Card giveFirstCard(){
+        Card firstCard = cards.getFirst();
+        cards.remove(firstCard);
+        return firstCard;
     }
 
     public String getDisplayedHand() {
@@ -74,6 +90,11 @@ public class Hand {
 
     public List<Card> getCards(){
         return cards;
+    }
+
+    public boolean isSplitPair(){
+        return cards.size() == 2 &&
+                cards.getFirst().getValueName().equals(cards.get(1).getValueName());
     }
 
     @Override

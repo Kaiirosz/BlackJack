@@ -2,7 +2,7 @@ package logic;
 
 import model.*;
 
-public class DealerTurnLogic implements TurnLogic {
+public class DealerTurnLogic {
 
     private final PlayerManager playerManager;
     private final Dealer dealer;
@@ -25,14 +25,12 @@ public class DealerTurnLogic implements TurnLogic {
         return Action.STAND;
     }
 
-    @Override
-    public TurnResult hit(Player player) {
+    public TurnResult hit() {
         dealer.hit();
         return TurnResult.CONTINUE;
     }
 
-    @Override
-    public TurnResult stand(Player player) {
+    public TurnResult stand() {
         return TurnResult.STAND;
     }
 

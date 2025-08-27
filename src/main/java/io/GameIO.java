@@ -1,10 +1,7 @@
 package io;
 
 import logic.PlayerManager;
-import model.Card;
-import model.Dealer;
-import model.Outcome;
-import model.Player;
+import model.*;
 
 public interface GameIO {
 
@@ -39,11 +36,14 @@ public interface GameIO {
     void printAllCards(PlayerManager playerManager, Dealer dealer);
 
     void showPlayerTurn(String name);
-    void displayPlayerOptions(boolean isFirstAction, boolean canAffordDoubleDown);
+    void displayPlayerOptions(boolean isFirstAction, boolean canAffordDoubleDown, boolean canSplit);
     void displayInvalidActionMessage();
 
     void showDealerGivingCardMessage();
     void printRevealedCardNotification(Card hitCard);
+    void displayCardsSplitMessage(Card pairCard);
+    void printHittingForSplitHandNotification();
+    void displayNextHandMessage();
 
     void printAIHitsNotification(Player ai);
     void printAIDoublesDownNotification(Player ai);

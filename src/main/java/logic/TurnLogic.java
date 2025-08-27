@@ -4,7 +4,8 @@ import model.Player;
 import model.TurnResult;
 
 public interface TurnLogic {
-    TurnResult hit(Player player);
-    TurnResult stand(Player player);
-
+    TurnResult hit();
+    TurnResult stand();
+    TurnResult doubleDown();
+    TurnResult split();
 }

@@ -107,19 +107,19 @@ public class RoundHandler {
     }
 
     private void humanPlayerTurn() {
-        PlayerTurnHandler playerTurnHandler = new PlayerTurnHandler();
-        playerTurnHandler.handleTurn(gameContext, roundOutcome, io, utils);
+        PlayerTurnHandler playerTurnHandler = new PlayerTurnHandler(gameContext, roundOutcome, io, utils);
+        playerTurnHandler.handleTurn();
     }
 
     private void aiPlayersTurn() {
-        AITurnHandler aiTurnHandler = new AITurnHandler();
-        aiTurnHandler.handleTurn(gameContext, roundOutcome, io, utils);
+        AITurnHandler aiTurnHandler = new AITurnHandler(gameContext, roundOutcome, io, utils);
+        aiTurnHandler.handleTurn();
     }
 
 
     private void dealerTurn() {
-        DealerTurnHandler dealerTurnHandler = new DealerTurnHandler();
-        dealerTurnHandler.handleTurn(gameContext, roundOutcome, io, utils);
+        DealerTurnHandler dealerTurnHandler = new DealerTurnHandler(gameContext, roundOutcome, io, utils);
+        dealerTurnHandler.handleTurn();
     }
 
 
@@ -130,28 +130,35 @@ public class RoundHandler {
         if (dealersTotalValue > 21) {
             io.printDealerBustsMessage();
             for (Player p : playerManager.getAllPlayersInRound()) {
-                Hand hand = p.getFirstHand();
-                hand.setHandOutcome(Outcome.WIN);
-                int playerBet = hand.getBet();
-                int betResult = betManager.settleBetOutcome(hand.getHandOutcome(), playerBet);
-                roundOutcome.addPlayerOutcome(p, betResult);
+                for (Hand hand : p.getHandList()){
+                    if (hand.getHandOutcome() != null){
+                        continue;
+                    }
+                    hand.setHandOutcome(Outcome.WIN);
+                    int playerBet = hand.getBet();
+                    int betResult = betManager.settleBetOutcome(hand.getHandOutcome(), playerBet);
+                    roundOutcome.addPlayerOutcome(p, betResult);
+                }
             }
             return;
         }
         for (Player p : playerManager.getAllPlayersInRound()) {
-            Hand hand = p.getFirstHand();
-            int playersTotalValue = p.getHandTotalBlackJackValue(hand);
-            int playerBet = hand.getBet();
-            int betResult;
-            if (playersTotalValue == dealersTotalValue) {
-                hand.setHandOutcome(Outcome.PUSH);
-            } else if (playersTotalValue < dealersTotalValue) {
-                hand.setHandOutcome(Outcome.LOSE);
-            } else {
-                hand.setHandOutcome(Outcome.WIN);
+            for (Hand hand : p.getHandList()){
+                if (hand.getHandOutcome() != null){
+                    continue;
+                }
+                int handBet = hand.getBet();
+                int handTotalValue = p.getHandTotalBlackJackValue(hand);
+                if (handTotalValue == dealersTotalValue) {
+                    hand.setHandOutcome(Outcome.PUSH);
+                } else if (handTotalValue < dealersTotalValue) {
+                    hand.setHandOutcome(Outcome.LOSE);
+                } else {
+                    hand.setHandOutcome(Outcome.WIN);
+                }
+                int handBetResult = betManager.settleBetOutcome(hand.getHandOutcome(), handBet);
+                roundOutcome.addPlayerOutcome(p, handBetResult);
             }
-            betResult = betManager.settleBetOutcome(hand.getHandOutcome(), playerBet);
-            roundOutcome.addPlayerOutcome(p, betResult);
         }
     }
 }

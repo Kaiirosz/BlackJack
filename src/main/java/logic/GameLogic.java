@@ -73,7 +73,10 @@ public class GameLogic {
         while (true){
             bet = io.askForBetAmount(playerBalance);
             if (betManager.isValidBet(playerBalance, bet)){
-                betManager.placePlayerBet(humanPlayer, bet);
+                Hand newHand = new Hand();
+                humanPlayer.addHand(newHand);
+                int betAmountInCents = bet * 100;
+                betManager.placePlayerBet(humanPlayer, betAmountInCents, newHand);
                 io.showBetWasMadeMessage(bet);
                 break;
             }

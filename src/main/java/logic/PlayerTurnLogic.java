@@ -2,65 +2,89 @@ package logic;
 
 import model.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PlayerTurnLogic implements TurnLogic {
     private final PlayerManager playerManager;
     private final Dealer dealer;
     private final BetManager betManager;
     private final RoundOutcome roundOutcome;
-    private Card hitCard;
+    private final Player humanPlayer;
+    private final Hand currentHand;
+    private List<Card> cardsHitList;
     private static final int BLACKJACK_VALUE = 21;
 
 
-    public PlayerTurnLogic(GameContext gameContext, RoundOutcome roundOutcome){
+    public PlayerTurnLogic(GameContext gameContext, RoundOutcome roundOutcome, Hand currentHand){
         this.playerManager = gameContext.getPlayerManager();
         this.dealer = gameContext.getDealer();
         this.betManager = gameContext.getBetManager();
         this.roundOutcome = roundOutcome;
+        this.humanPlayer = playerManager.getHumanPlayer();
+        this.currentHand = currentHand;
+        this.cardsHitList = new ArrayList<>();
     }
 
-    public TurnResult hit(Player humanPlayer){
-        Hand firstHand = humanPlayer.getFirstHand();
-        setHitCard(dealer.giveCard());
-        humanPlayer.addCardToHand(hitCard, firstHand);
-        if (firstHand.getTotalBlackJackValue() > BLACKJACK_VALUE) {
-            firstHand.setHandOutcome(Outcome.BUST);
+    public TurnResult hit(){
+        cardsHitList.add(dealer.giveCard());
+        humanPlayer.addCardToHand(getLastCardHit(), currentHand);
+        if (currentHand.getTotalBlackJackValue() > BLACKJACK_VALUE) {
+            currentHand.setHandOutcome(Outcome.BUST);
             return TurnResult.BUST;
-        } else if (firstHand.getTotalBlackJackValue() == BLACKJACK_VALUE) {
-            return stand(humanPlayer);
+        } else if (currentHand.getTotalBlackJackValue() == BLACKJACK_VALUE) {
+            return stand();
         }
         return TurnResult.CONTINUE;
     }
 
-    public TurnResult stand(Player player){
+    public TurnResult stand(){
         return TurnResult.STAND;
     }
 
-    public TurnResult doubleDown(Player humanPlayer){
-        Hand firstHand = humanPlayer.getFirstHand();
-        betManager.doubleDownBet(humanPlayer, firstHand);
-        setHitCard(dealer.giveCard());
-        humanPlayer.addCardToHand(hitCard, firstHand);
-        if (firstHand.getTotalBlackJackValue() > BLACKJACK_VALUE) {
-            firstHand.setHandOutcome(Outcome.BUST);
+    public TurnResult doubleDown(){
+        betManager.doubleDownBet(humanPlayer, currentHand);
+        cardsHitList.add(dealer.giveCard());
+        humanPlayer.addCardToHand(getLastCardHit(), currentHand);
+        if (currentHand.getTotalBlackJackValue() > BLACKJACK_VALUE) {
+            currentHand.setHandOutcome(Outcome.BUST);
             return TurnResult.BUST;
         }
-        return stand(humanPlayer);
+        return stand();
     }
 
-    public void removePlayerFromRound(Player humanPlayer){
-        Hand firstHand = humanPlayer.getFirstHand();
-        int betMoney = humanPlayer.getHandBet(firstHand);
-        int betOutcome = betManager.settleBetOutcome(firstHand.getHandOutcome(), betMoney);
+    public TurnResult split(){
+        Hand splitHand = humanPlayer.splitHand(currentHand);
+        betManager.placePlayerBet(humanPlayer, currentHand.getBet(), splitHand);
+
+        cardsHitList.add(dealer.giveCard());
+        humanPlayer.addCardToHand(getLastCardHit(), currentHand);
+        cardsHitList.add(dealer.giveCard());
+        humanPlayer.addCardToHand(getLastCardHit(), splitHand);
+        return TurnResult.CONTINUE;
+    }
+
+
+
+    public void resolveBust(){
+        int betMoney = humanPlayer.getHandBet(currentHand);
+        int betOutcome = betManager.settleBetOutcome(currentHand.getHandOutcome(), betMoney);
         roundOutcome.addPlayerOutcome(humanPlayer, betOutcome);
-        playerManager.removePlayerFromRound(humanPlayer);
+        if (humanPlayer.allHandsHaveOutcomes()) {
+            playerManager.removePlayerFromRound(humanPlayer);
+        }
     }
 
-    public Card getHitCard(){
-        return hitCard;
+    public void resolveHand(){
+        currentHand.setUnresolved(false);
     }
 
-    public void setHitCard(Card hitCard){
-        this.hitCard = hitCard;
+    public Card getSecondToLastCardHit(){
+        return cardsHitList.get(cardsHitList.size() - 2);
+    }
+
+    public Card getLastCardHit(){
+        return cardsHitList.getLast();
     }
 
 

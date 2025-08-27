@@ -3,12 +3,19 @@ package model;
 public enum Action {
     HIT,
     STAND,
-    DOUBLE_DOWN;
+    DOUBLE_DOWN,
+    SPLIT;
 
-    public static Action parseString(String actionStr, boolean isFirstAction, boolean canAffordDoubleDown) {
+    public static Action parseString(String actionStr, boolean isFirstAction, boolean canAffordDoubleDown, boolean canSplit) {
+
+        if (actionStr.equalsIgnoreCase("SPLIT") && !canSplit){
+            throw new IllegalArgumentException("Split not allowed here");
+        }
+
         if (actionStr.equalsIgnoreCase("DOUBLE DOWN") && !isFirstAction || !canAffordDoubleDown) {
             throw new IllegalArgumentException("Double Down not allowed after first action");
         }
+
         for (Action a : Action.values()) {
             if (a.toString().equalsIgnoreCase(actionStr)) {
                 return a;

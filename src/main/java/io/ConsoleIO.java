@@ -139,8 +139,7 @@ public class ConsoleIO implements GameIO {
         println("-------------------------------------------");
         if (playerManager.checkIfHumanIsInRound()){
             Player humanPlayer = playerManager.getHumanPlayer();
-            Hand initialPlayerHand = humanPlayer.getFirstHand();
-            println("Your cards: " + initialPlayerHand.getDisplayedHand() + " = " + initialPlayerHand.getTotalBlackJackValue());
+            println("Your cards: " + humanPlayer.getAllHandsAndValues());
         }
         for (Player p : playerManager.getAIPlayersInRound()){
             printAICards(p);
@@ -154,16 +153,16 @@ public class ConsoleIO implements GameIO {
     }
 
     @Override
-    public void displayPlayerOptions(boolean isFirstAction, boolean canAffordDoubleDown) {
+    public void displayPlayerOptions(boolean isFirstAction, boolean canAffordDoubleDown, boolean canSplit) {
         println("What do you do now?");
+        StringBuilder sb = new StringBuilder("1. Hit\n2. Stand");
         if (isFirstAction && canAffordDoubleDown){
-            println("""
-                    1. Hit
-                    2. Stand
-                    3. Double Down""");
-            return;
+            sb.append("\n3. Double Down");
         }
-        println("1. Hit\n2. Stand");
+        if (canSplit){
+            sb.append("\n4. Split");
+        }
+        println(sb.toString());
     }
 
 
@@ -182,6 +181,21 @@ public class ConsoleIO implements GameIO {
         println("It's " + hitCard.getCardNotation() + "!");
     }
 
+    @Override
+    public void displayCardsSplitMessage(Card pairCard){
+        println("Your hand was split into two hands: [" + pairCard + ", ?] and [" + pairCard + ", ?]");
+    }
+
+    @Override
+    public void printHittingForSplitHandNotification(){
+        println("------------------------------------------");
+        println("Now hitting for split hand");
+    }
+
+    @Override
+    public void displayNextHandMessage(){
+        println("Proceeding to next hand");
+    }
 
     @Override
     public void printAIHitsNotification(Player ai){
@@ -196,7 +210,7 @@ public class ConsoleIO implements GameIO {
     @Override
     public void printAICards(Player p){
         Hand initialAIHand = p.getFirstHand();
-        println(p.getName() + "'s cards: " + initialAIHand.getDisplayedHand() + " = " + initialAIHand.getTotalBlackJackValue());
+        println(p.getName() + "'s cards: " + p.getAllHandsAndValues());
     }
 
     @Override

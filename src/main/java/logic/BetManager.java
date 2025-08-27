@@ -7,12 +7,9 @@ import java.math.BigDecimal;
 
 public class BetManager {
 
-    public void placePlayerBet(Player humanPlayer, int betAmount){
-        Hand hand = new Hand();
-        int betAmountInCents = betAmount * 100;
-        hand.setBet(betAmountInCents);
+    public void placePlayerBet(Player humanPlayer, int betAmountInCents, Hand handToBetIn){
+        handToBetIn.setBet(betAmountInCents);
         humanPlayer.subtractMoney(betAmountInCents);
-        humanPlayer.addHand(hand);
     }
 
     public void doubleDownBet(Player player, Hand handToDoubleDown){

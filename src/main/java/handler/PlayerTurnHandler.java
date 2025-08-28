@@ -58,6 +58,9 @@ public class PlayerTurnHandler implements TurnHandler {
                 case STAND:
                     turnResult = playerTurnLogic.stand();
                     break;
+                case SURRENDER:
+                    turnResult = playerTurnLogic.surrender();
+                    break;
                 case DOUBLE_DOWN:
                     turnResult = playerTurnLogic.doubleDown();
                     cardHit = playerTurnLogic.getLastCardHit();
@@ -74,6 +77,7 @@ public class PlayerTurnHandler implements TurnHandler {
                     io.printHittingForSplitHandNotification();
                     revealDealtCard(cardHitForSecondHand);
                     io.printAllCards(playerManager,dealer);
+                    break;
             }
             canSplit = false;
         }
@@ -95,6 +99,7 @@ public class PlayerTurnHandler implements TurnHandler {
             try {
                 return Action.parseString(io.readLine(), isFirstAction, canAffordDoubleDown, canSplit);
             } catch (IllegalArgumentException e) {
+                io.println(e.getMessage());
                 io.displayInvalidActionMessage();
             }
         }

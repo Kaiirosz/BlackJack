@@ -5,5 +5,6 @@ public enum Outcome {
     PUSH,
     LOSE,
     BUST,
-    BLACKJACK
+    BLACKJACK,
+    SURRENDER;
 }

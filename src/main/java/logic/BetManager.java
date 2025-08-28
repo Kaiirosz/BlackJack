@@ -45,6 +45,7 @@ public class BetManager {
             case WIN -> multiplier = BigDecimal.valueOf(2);
             case PUSH -> multiplier = BigDecimal.valueOf(1);
             case LOSE, BUST -> multiplier = BigDecimal.valueOf(0);
+            case SURRENDER -> multiplier = BigDecimal.valueOf(0.5);
             default -> throw new IllegalArgumentException("Unknown Outcome");
         }
         return bigDecimalBetMoney.multiply(multiplier).intValue();

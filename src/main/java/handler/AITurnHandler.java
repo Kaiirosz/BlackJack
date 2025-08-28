@@ -72,6 +72,7 @@ public class AITurnHandler implements TurnHandler {
                     io.printHittingForSplitHandNotification();
                     revealDealtCard(cardHitForSecondHand);
                     io.printAICards(ai);
+                    break;
             }
         }
         if (turnResult.equals(TurnResult.STAND)) {

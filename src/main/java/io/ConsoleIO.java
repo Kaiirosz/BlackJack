@@ -156,11 +156,14 @@ public class ConsoleIO implements GameIO {
     public void displayPlayerOptions(boolean isFirstAction, boolean canAffordDoubleDown, boolean canSplit) {
         println("What do you do now?");
         StringBuilder sb = new StringBuilder("1. Hit\n2. Stand");
+        if (isFirstAction){
+            sb.append("\n3. Surrender");
+        }
         if (isFirstAction && canAffordDoubleDown){
-            sb.append("\n3. Double Down");
+            sb.append("\n4. Double Down");
         }
         if (canSplit){
-            sb.append("\n4. Split");
+            sb.append("\n5. Split");
         }
         println(sb.toString());
     }

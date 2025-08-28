@@ -42,6 +42,16 @@ public class PlayerTurnLogic implements TurnLogic {
         return TurnResult.STAND;
     }
 
+    public TurnResult surrender(){
+        currentHand.setHandOutcome(Outcome.SURRENDER);
+        int handBet = currentHand.getBet();
+        Outcome handOutcome = currentHand.getHandOutcome();
+        int betOutcome = betManager.settleBetOutcome(handOutcome, handBet);
+        roundOutcome.addPlayerOutcome(humanPlayer, betOutcome);
+        playerManager.removePlayerFromRound(humanPlayer);
+        return TurnResult.SURRENDER;
+    }
+
     public TurnResult doubleDown(){
         betManager.doubleDownBet(humanPlayer, currentHand);
         cardsHitList.add(dealer.giveCard());

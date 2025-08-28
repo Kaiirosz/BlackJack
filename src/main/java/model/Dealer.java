@@ -19,14 +19,13 @@ public class Dealer {
     }
 
     public void dealCards(PlayerManager playerManager){
-/*        Card pairCard = new Card(Value.TEN, Suit.SPADES, "♠");
-        Card pairCard2 = new Card(Value.TEN, Suit.SPADES, "♥");
-        Player human = playerManager.getHumanPlayer();
-        Hand humanInitialHand = human.getFirstHand();
-        human.addCardToHand(pairCard, humanInitialHand);
-        human.addCardToHand(pairCard2, humanInitialHand);*/
+/*        Card pairCard = new Card(Value.ACE, Suit.SPADES, "♠");
+        Card pairCard2 = new Card(Value.ACE, Suit.SPADES, "♥");*/
         for (Player player : playerManager.getAllPlayersInRound()){
-/*            if (player.getIsHuman()){
+/*            if (player.getName().equals("Player 2")){
+                Hand AIInitialHand = player.getFirstHand();
+                player.addCardToHand(pairCard, AIInitialHand);
+                player.addCardToHand(pairCard2, AIInitialHand);
                 continue;
             }*/
             Hand initialHand = player.getFirstHand();

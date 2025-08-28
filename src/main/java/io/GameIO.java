@@ -47,6 +47,7 @@ public interface GameIO {
 
     void printAIHitsNotification(Player ai);
     void printAIDoublesDownNotification(Player ai);
+    void printAISplitsNotification(Player ai);
     void printAICards(Player ai);
     void printStandNotification();
     void printPlayerBustNotification();

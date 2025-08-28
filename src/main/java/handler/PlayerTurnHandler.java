@@ -51,7 +51,7 @@ public class PlayerTurnHandler implements TurnHandler {
                 case HIT:
                     turnResult = playerTurnLogic.hit();
                     cardHit = playerTurnLogic.getLastCardHit();
-                    revealDealtCard(io, utils, cardHit);
+                    revealDealtCard(cardHit);
                     io.printAllCards(playerManager, dealer);
                     isFirstAction = false;
                     break;
@@ -61,7 +61,7 @@ public class PlayerTurnHandler implements TurnHandler {
                 case DOUBLE_DOWN:
                     turnResult = playerTurnLogic.doubleDown();
                     cardHit = playerTurnLogic.getLastCardHit();
-                    revealDealtCard(io, utils, cardHit);
+                    revealDealtCard(cardHit);
                     isFirstAction = false;
                     break;
                 case SPLIT:
@@ -70,9 +70,9 @@ public class PlayerTurnHandler implements TurnHandler {
                     utils.pauseForEffect(1000);
                     Card cardHitForFirstHand = playerTurnLogic.getSecondToLastCardHit();
                     Card cardHitForSecondHand = playerTurnLogic.getLastCardHit();
-                    revealDealtCard(io, utils, cardHitForFirstHand);
+                    revealDealtCard(cardHitForFirstHand);
                     io.printHittingForSplitHandNotification();
-                    revealDealtCard(io, utils, cardHitForSecondHand);
+                    revealDealtCard(cardHitForSecondHand);
                     io.printAllCards(playerManager,dealer);
             }
             canSplit = false;
@@ -100,7 +100,7 @@ public class PlayerTurnHandler implements TurnHandler {
         }
     }
 
-    private void revealDealtCard(GameIO io, GameUtils utils, Card cardHit){
+    private void revealDealtCard(Card cardHit){
         io.showDealerGivingCardMessage();
         utils.pauseForEffect(1000);
         io.printRevealedCardNotification(cardHit);

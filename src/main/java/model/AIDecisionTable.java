@@ -10,12 +10,14 @@ public class AIDecisionTable {
     private final HandStrength dealerHandStrength;
     private final boolean isFirstAction;
     private final boolean canAffordDoubleDown;
+    private final boolean shouldSplit;
 
-    public AIDecisionTable(HandStrength aiHandStrength, HandStrength dealerHandStrength, boolean isFirstAction, boolean canAffordDoubleDown) {
+    public AIDecisionTable(HandStrength aiHandStrength, HandStrength dealerHandStrength, boolean isFirstAction, boolean canAffordDoubleDown, boolean shouldSplit) {
         this.aiHandStrength = aiHandStrength;
         this.dealerHandStrength = dealerHandStrength;
         this.isFirstAction = isFirstAction;
         this.canAffordDoubleDown = canAffordDoubleDown;
+        this.shouldSplit = shouldSplit;
         handMatchUps = new ArrayList<>();
         initializeDecisionTable();
     }
@@ -59,6 +61,9 @@ public class AIDecisionTable {
     }
 
     public Action getAction(){
+        if (shouldSplit && canAffordDoubleDown){
+            return Action.SPLIT;
+        }
         HandMatchup currentHandMatchup = new HandMatchup(aiHandStrength, dealerHandStrength);
         for (HandMatchup matchUp : handMatchUps){
             if (matchUp.equals(currentHandMatchup)){

@@ -130,19 +130,21 @@ public class RoundHandler {
         if (dealersTotalValue > 21) {
             io.printDealerBustsMessage();
             for (Player p : playerManager.getAllPlayersInRound()) {
+                int betResult = 0;
                 for (Hand hand : p.getHandList()){
                     if (hand.getHandOutcome() != null){
                         continue;
                     }
                     hand.setHandOutcome(Outcome.WIN);
-                    int playerBet = hand.getBet();
-                    int betResult = betManager.settleBetOutcome(hand.getHandOutcome(), playerBet);
-                    roundOutcome.addPlayerOutcome(p, betResult);
+                    int handBet = hand.getBet();
+                    betResult += betManager.settleBetOutcome(hand.getHandOutcome(), handBet);
                 }
+                roundOutcome.addPlayerOutcome(p, betResult);
             }
             return;
         }
         for (Player p : playerManager.getAllPlayersInRound()) {
+            int betResult = 0;
             for (Hand hand : p.getHandList()){
                 if (hand.getHandOutcome() != null){
                     continue;
@@ -156,9 +158,9 @@ public class RoundHandler {
                 } else {
                     hand.setHandOutcome(Outcome.WIN);
                 }
-                int handBetResult = betManager.settleBetOutcome(hand.getHandOutcome(), handBet);
-                roundOutcome.addPlayerOutcome(p, handBetResult);
+                betResult += betManager.settleBetOutcome(hand.getHandOutcome(), handBet);
             }
+            roundOutcome.addPlayerOutcome(p, betResult);
         }
     }
 }

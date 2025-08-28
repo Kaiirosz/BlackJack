@@ -7,9 +7,9 @@ import java.math.BigDecimal;
 
 public class BetManager {
 
-    public void placePlayerBet(Player humanPlayer, int betAmountInCents, Hand handToBetIn){
+    public void placePlayerBet(Player player, int betAmountInCents, Hand handToBetIn){
         handToBetIn.setBet(betAmountInCents);
-        humanPlayer.subtractMoney(betAmountInCents);
+        player.subtractMoney(betAmountInCents);
     }
 
     public void doubleDownBet(Player player, Hand handToDoubleDown){
@@ -18,21 +18,17 @@ public class BetManager {
         player.subtractMoney(betInCents);
     }
 
-    public int placeAIBet(Player aiPlayer, int betAmount){ //case where AI has no money to bet TBD
-            Hand aiHand = new Hand();
+    public int placeAIBet(Player aiPlayer, int betAmount, Hand handToBetIn){ //case where AI has no money to bet TBD
             int aiMoney = aiPlayer.getBalance();
-            int betAmountInCents = betAmount * 100;
-            if (betAmountInCents > aiMoney){
+            if (betAmount > aiMoney){
                 aiPlayer.subtractMoney(aiMoney);
-                aiHand.setBet(aiMoney);
-                aiPlayer.addHand(aiHand);
+                handToBetIn.setBet(aiMoney);
                 return aiMoney / 100;
             }
             else {
-                aiPlayer.subtractMoney(betAmountInCents);
-                aiHand.setBet(betAmountInCents);
-                aiPlayer.addHand(aiHand);
-                return betAmount;
+                aiPlayer.subtractMoney(betAmount);
+                handToBetIn.setBet(betAmount);
+                return betAmount / 100;
             }
     }
 

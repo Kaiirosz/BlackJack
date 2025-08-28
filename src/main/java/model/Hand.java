@@ -97,6 +97,18 @@ public class Hand {
                 cards.getFirst().getValueName().equals(cards.get(1).getValueName());
     }
 
+    public boolean splitPairIsEightOrAces(){
+        if (cards.size() > 2){
+            return false;
+        }
+        String firstCardValueName = cards.getFirst().getValueName();
+        String secondCardValueName = cards.get(1).getValueName();
+        if (!firstCardValueName.equals(secondCardValueName)){
+            return false;
+        }
+        return firstCardValueName.equals("ACE") || firstCardValueName.equals("EIGHT");
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

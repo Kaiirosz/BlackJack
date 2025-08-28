@@ -56,7 +56,6 @@ public class PlayerTurnLogic implements TurnLogic {
     public TurnResult split(){
         Hand splitHand = humanPlayer.splitHand(currentHand);
         betManager.placePlayerBet(humanPlayer, currentHand.getBet(), splitHand);
-
         cardsHitList.add(dealer.giveCard());
         humanPlayer.addCardToHand(getLastCardHit(), currentHand);
         cardsHitList.add(dealer.giveCard());

@@ -83,8 +83,11 @@ public class GameLogic {
             io.showInvalidBetMessage();
         }
         List<Player> aiPlayers = playerManager.getAIPlayersInRound();
+        int betAmountInCents = bet * 100;
         for (Player ai: aiPlayers){
-            int aiBet = betManager.placeAIBet(ai, bet);
+            Hand newHand = new Hand();
+            ai.addHand(newHand);
+            int aiBet = betManager.placeAIBet(ai, betAmountInCents, newHand);
             io.showAIBetMadeMessage(ai, aiBet);
             utils.pauseForEffect(500);
         }

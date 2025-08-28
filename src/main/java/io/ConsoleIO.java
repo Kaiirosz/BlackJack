@@ -183,7 +183,7 @@ public class ConsoleIO implements GameIO {
 
     @Override
     public void displayCardsSplitMessage(Card pairCard){
-        println("Your hand was split into two hands: [" + pairCard + ", ?] and [" + pairCard + ", ?]");
+        println("The hand was split into two hands: [" + pairCard + ", ?] and [" + pairCard + ", ?]");
     }
 
     @Override
@@ -206,6 +206,12 @@ public class ConsoleIO implements GameIO {
     public void printAIDoublesDownNotification(Player ai){
         println(ai.getName() + " has decided to double down!");
     }
+
+    @Override
+    public void printAISplitsNotification(Player ai){
+        println(ai.getName() + " has decided to split!");
+    }
+
 
     @Override
     public void printAICards(Player p){

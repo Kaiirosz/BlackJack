@@ -16,7 +16,7 @@ public class Card {
     }
 
     public String getValueName() {
-        return value.name();
+        return value.toString();
     }
 
     public Value getValue() {

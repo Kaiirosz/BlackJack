@@ -5,14 +5,14 @@ import logic.*;
 import model.*;
 import utils.GameUtils;
 
-public class AITurnHandler implements TurnHandler{
+public class AITurnHandler implements TurnHandler {
     private final GameContext gameContext;
     private final PlayerManager playerManager;
     private final RoundOutcome roundOutcome;
     private final GameIO io;
     private final GameUtils utils;
 
-    public AITurnHandler(GameContext gameContext, RoundOutcome roundOutcome, GameIO io, GameUtils utils){
+    public AITurnHandler(GameContext gameContext, RoundOutcome roundOutcome, GameIO io, GameUtils utils) {
         this.gameContext = gameContext;
         this.playerManager = gameContext.getPlayerManager();
         this.roundOutcome = roundOutcome;
@@ -22,50 +22,79 @@ public class AITurnHandler implements TurnHandler{
 
     @Override
     public void handleTurn() {
-            for (Player ai : playerManager.getAIPlayersInRound()) {
+        for (Player ai : playerManager.getAIPlayersInRound()) {
+            io.showPlayerTurn(ai.getName());
+            utils.pauseForEffect(1000);
+            while (ai.hasUnresolvedHand()) {
                 Hand currentHand = ai.getFirstUnresolvedHand();
                 AITurnLogic aiTurnLogic = new AITurnLogic(gameContext, roundOutcome, ai, currentHand);
-                io.showPlayerTurn(ai.getName());
-                utils.pauseForEffect(1000);
-                boolean isFirstAction = true;
-                TurnResult turnResult = TurnResult.CONTINUE;
-                while (turnResult.equals(TurnResult.CONTINUE)) {
-                    Action action = aiTurnLogic.decideAction(isFirstAction);
-                    switch (action) {
-                        case HIT:
-                            io.printAIHitsNotification(ai);
-                            turnResult = aiTurnLogic.hit();
-                            Card cardHit = aiTurnLogic.getHitCard();
-                            io.showDealerGivingCardMessage();
-                            utils.pauseForEffect(1000);
-                            io.printRevealedCardNotification(cardHit);
-                            utils.pauseForEffect(1000);
-                            io.printAICards(ai);
-                            break;
-                        case STAND:
-                            turnResult = aiTurnLogic.stand();
-                            break;
-                        case DOUBLE_DOWN:
-                            io.printAIDoublesDownNotification(ai);
-                            turnResult = aiTurnLogic.doubleDown();
-                            Card cardHit2 = aiTurnLogic.getHitCard();
-                            io.showDealerGivingCardMessage();
-                            utils.pauseForEffect(1000);
-                            io.printRevealedCardNotification(cardHit2);
-                            utils.pauseForEffect(1000);
-                            io.printAICards(ai);
-                            break;
-                    }
-                    isFirstAction = false;
-                }
-                if (turnResult.equals(TurnResult.STAND)){
-                    io.printStandNotification();
-                }
-                if (turnResult.equals(TurnResult.BUST)) {
-                    io.printPlayerBustNotification();
-                    aiTurnLogic.removePlayerFromRound();
-                }
-                utils.pauseForEffect(1000);
+                processAction(ai, aiTurnLogic, currentHand);
+            }
+            utils.pauseForEffect(1000);
         }
+    }
+
+    private void processAction(Player ai, AITurnLogic aiTurnLogic, Hand currentHand) {
+        boolean isFirstAction = true;
+        TurnResult turnResult = TurnResult.CONTINUE;
+        Card cardHit;
+        while (turnResult.equals(TurnResult.CONTINUE)) {
+            Action action = aiTurnLogic.decideAction(isFirstAction);
+            switch (action) {
+                case HIT:
+                    io.printAIHitsNotification(ai);
+                    turnResult = aiTurnLogic.hit();
+                    cardHit = aiTurnLogic.getLastCardHit();
+                    revealDealtCard(cardHit);
+                    io.printAICards(ai);
+                    isFirstAction = false;
+                    break;
+                case STAND:
+                    turnResult = aiTurnLogic.stand();
+                    break;
+                case DOUBLE_DOWN:
+                    io.printAIDoublesDownNotification(ai);
+                    turnResult = aiTurnLogic.doubleDown();
+                    cardHit = aiTurnLogic.getLastCardHit();
+                    revealDealtCard(cardHit);
+                    io.printAICards(ai);
+                    isFirstAction = false;
+                    break;
+                case SPLIT:
+                    io.printAISplitsNotification(ai);
+                    utils.pauseForEffect(1000);
+                    turnResult = aiTurnLogic.split();
+                    io.displayCardsSplitMessage(currentHand.getCard(0));
+                    utils.pauseForEffect(1000);
+                    Card cardHitForFirstHand = aiTurnLogic.getSecondToLastCardHit();
+                    Card cardHitForSecondHand = aiTurnLogic.getLastCardHit();
+                    revealDealtCard(cardHitForFirstHand);
+                    io.printHittingForSplitHandNotification();
+                    revealDealtCard(cardHitForSecondHand);
+                    io.printAICards(ai);
+            }
+        }
+        if (turnResult.equals(TurnResult.STAND)) {
+            io.printStandNotification();
+        }
+        if (turnResult.equals(TurnResult.BUST)) {
+            io.printPlayerBustNotification();
+            aiTurnLogic.resolveBust();
+        }
+        aiTurnLogic.resolveHand();
+        if (ai.hasUnresolvedHand()){
+            utils.pauseForEffect(1000);
+            io.displayNextHandMessage();
+            utils.pauseForEffect(1000);
+            io.printAICards(ai);
+            utils.pauseForEffect(1000);
+        }
+    }
+
+    private void revealDealtCard(Card cardHit) {
+        io.showDealerGivingCardMessage();
+        utils.pauseForEffect(1000);
+        io.printRevealedCardNotification(cardHit);
+        utils.pauseForEffect(1000);
     }
 }

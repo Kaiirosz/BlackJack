@@ -1,10 +1,7 @@
 package handler;
 
 import io.GameIO;
-import logic.BetManager;
-import logic.BlackjackEvaluator;
-import logic.GameContext;
-import logic.PlayerManager;
+import logic.*;
 import model.*;
 import utils.GameUtils;
 
@@ -33,15 +30,17 @@ public class RoundHandler {
     public RoundOutcome startRound() {
         io.displayRoundStart();
         dealerDeals();
+        handleInsuranceIfPossible();
         Optional<RoundOutcome> bjOutcome = handleBlackjackPhase();
+        resolveInsurance();
         if (bjOutcome.isPresent()) {
             return bjOutcome.get();
         }
         io.printAllCards(playerManager, dealer);
-        if (playerManager.checkIfHumanIsInRound()){
+        if (playerManager.checkIfHumanIsInRound()) {
             humanPlayerTurn();
         }
-        if (playerManager.checkIfAnAIStillInRound()){
+        if (playerManager.checkIfAnAIStillInRound()) {
             aiPlayersTurn();
         }
         if (playerManager.getAllPlayersInRound().isEmpty()) {
@@ -69,41 +68,73 @@ public class RoundHandler {
         utils.pauseForEffect(1000);
     }
 
+    private void handleInsuranceIfPossible() {
+        if (dealer.hasFaceUpAce()) {
+            handlePlayerInsurance();
+            handleAIInsurance();
+        }
+    }
+
+    private void handlePlayerInsurance() {
+        Player humanPlayer = playerManager.getHumanPlayer();
+        if (humanPlayer.canAffordHalfOriginalBet()) {
+            int halfBet = humanPlayer.getHalfOriginalBet();
+            boolean didInsurance = io.askForInsurance(halfBet);
+            if (didInsurance) {
+                betManager.placeInsuranceBet(humanPlayer, halfBet);
+            }
+        }
+    }
+
+    private void handleAIInsurance() {
+        AIInsuranceLogic aiInsuranceLogic = new AIInsuranceLogic();
+        for (Player ai : playerManager.getAIPlayersInRound()) {
+            if (ai.canAffordHalfOriginalBet() && aiInsuranceLogic.decideToInsure(ai)) {
+                io.printAIInsuresNotification(ai.getName());
+                int halfBet = ai.getHalfOriginalBet();
+                betManager.placeInsuranceBet(ai, halfBet);
+            }
+        }
+    }
+
+
     private Optional<RoundOutcome> handleBlackjackPhase() { //issue with bj peeking
         BlackjackEvaluator blackjackEvaluator = new BlackjackEvaluator(gameContext);
-        if (checkForPlayerBlackjack(blackjackEvaluator)) {
-            roundOutcome = blackjackEvaluator.settleBlackJack();
-            for (Player p : blackjackEvaluator.getPlayersWithBlackjack()) {
-                playerManager.removePlayerFromRound(p);
-            }
-            if (checkForDealerBlackjack(blackjackEvaluator)) {
-                return Optional.of(roundOutcome);
-            }
+        roundOutcome = blackjackEvaluator.settleBlackJack();
+        checkForPlayerBlackjack(blackjackEvaluator);
+        if (checkForDealerBlackjack(blackjackEvaluator)) {
+            return Optional.of(roundOutcome);
         }
         return Optional.empty();
     }
 
-    private boolean checkForPlayerBlackjack(BlackjackEvaluator blackjackEvaluator) {
-        boolean aPlayerHasBlackjack = false;
+    private void checkForPlayerBlackjack(BlackjackEvaluator blackjackEvaluator) {
         List<Player> playersWithBJ = blackjackEvaluator.getPlayersWithBlackjack();
         if (!playersWithBJ.isEmpty()) {
-            aPlayerHasBlackjack = true;
             for (Player p : playersWithBJ) {
                 io.printBlackjackNotification(p);
                 utils.pauseForEffect(1000);
+                playerManager.removePlayerFromRound(p);
             }
         }
-        return aPlayerHasBlackjack;
     }
 
     private boolean checkForDealerBlackjack(BlackjackEvaluator blackjackEvaluator) {
-        boolean dealerHasBlackjack = checkForPlayerBlackjack(blackjackEvaluator);
+        io.showDealerPeeksMessage();
+        utils.pauseForEffect(2000);
+        boolean dealerHasBlackjack = blackjackEvaluator.checkForDealerBlackjack();
         if (dealerHasBlackjack) {
             io.showDealerRevealingCardMessage();
             utils.pauseForEffect(1000);
             io.printDealersBlackjackPair(dealer.getFaceUpCard(), dealer.getFaceDownCard());
+            utils.pauseForEffect(1000);
         }
         return dealerHasBlackjack;
+    }
+
+    private void resolveInsurance(){
+        io.showInsuranceResolvedMessage();
+        betManager.clearInsuredPlayersList();
     }
 
     private void humanPlayerTurn() {
@@ -122,8 +153,6 @@ public class RoundHandler {
         dealerTurnHandler.handleTurn();
     }
 
-
-
     private void settleRound() {
         utils.pauseForEffect(1000);
         int dealersTotalValue = dealer.getTotalBlackJackValue();
@@ -131,8 +160,8 @@ public class RoundHandler {
             io.printDealerBustsMessage();
             for (Player p : playerManager.getAllPlayersInRound()) {
                 int betResult = 0;
-                for (Hand hand : p.getHandList()){
-                    if (hand.getHandOutcome() != null){
+                for (Hand hand : p.getHandList()) {
+                    if (hand.getHandOutcome() != null) {
                         continue;
                     }
                     hand.setHandOutcome(Outcome.WIN);
@@ -145,8 +174,8 @@ public class RoundHandler {
         }
         for (Player p : playerManager.getAllPlayersInRound()) {
             int betResult = 0;
-            for (Hand hand : p.getHandList()){
-                if (hand.getHandOutcome() != null){
+            for (Hand hand : p.getHandList()) {
+                if (hand.getHandOutcome() != null) {
                     continue;
                 }
                 int handBet = hand.getBet();

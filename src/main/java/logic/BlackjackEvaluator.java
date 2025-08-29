@@ -33,13 +33,13 @@ public class BlackjackEvaluator {
     }
 
     public RoundOutcome settleBlackJack() {
-        boolean dealerHasBlackjack = checkForDealerBlackjack();
+        boolean dealerHasBJ = checkForDealerBlackjack();
         RoundOutcome roundOutcome = new RoundOutcome();
         int totalBetResult;
         for (Player p : playerManager.getAllPlayersInRound()) {
             Hand initialHand = p.getFirstHand();
             boolean initialHandHasBJ = initialHand.getTotalBlackJackValue() == BLACKJACK_VALUE;
-            if (dealerHasBlackjack) {
+            if (dealerHasBJ) {
                 if (initialHandHasBJ) {
                     initialHand.setHandOutcome(Outcome.PUSH);
                 } else {
@@ -55,6 +55,7 @@ public class BlackjackEvaluator {
                 roundOutcome.addPlayerOutcome(p, totalBetResult);
             }
         }
+        betManager.settleInsuranceBets(dealerHasBJ);
         return roundOutcome;
     }
 }

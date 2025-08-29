@@ -20,9 +20,9 @@ public class Dealer {
 
     public void dealCards(PlayerManager playerManager){
 /*        Card pairCard = new Card(Value.ACE, Suit.SPADES, "♠");
-        Card pairCard2 = new Card(Value.ACE, Suit.SPADES, "♥");*/
+        Card pairCard2 = new Card(Value.TEN, Suit.SPADES, "♥");*/
         for (Player player : playerManager.getAllPlayersInRound()){
-/*            if (player.getName().equals("Player 2")){
+/*            if (player.getIsHuman()){
                 Hand AIInitialHand = player.getFirstHand();
                 player.addCardToHand(pairCard, AIInitialHand);
                 player.addCardToHand(pairCard2, AIInitialHand);
@@ -32,6 +32,8 @@ public class Dealer {
             player.addCardToHand(deck.getFirstCard(), initialHand);
             player.addCardToHand(deck.getFirstCard(), initialHand);
         }
+/*        cards.add(pairCard);
+        cards.add(pairCard2);*/
         cards.add(deck.getFirstCard());
         cards.add(deck.getFirstCard());
     }
@@ -89,6 +91,10 @@ public class Dealer {
         }
         deck.getAllCards().addAll(cards);
         cards.clear();
+    }
+
+    public boolean hasFaceUpAce(){
+        return getFaceUpCard().getValue() == Value.ACE;
     }
 
 }

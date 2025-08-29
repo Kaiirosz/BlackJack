@@ -113,6 +113,28 @@ public class ConsoleIO implements GameIO {
     }
 
     @Override
+    public boolean askForInsurance(int halfBet){
+        println("Do you want to pay for insurance (" + halfBet/100 + ") (Y/N)?");
+        while (true) {
+            String answer = readLine();
+            if (answer.equalsIgnoreCase("Y")){
+                return true;
+            }
+            else if (answer.equalsIgnoreCase("N")){
+                return false;
+            }
+            else {
+                println("Unknown input, enter 'Y' for yes and 'N' for no");
+            }
+        }
+    }
+
+    @Override
+    public void printAIInsuresNotification(String aiName){
+        println(aiName + " has decide to pay for insurance");
+    }
+
+    @Override
     public void printBlackjackNotification(Player p) {
         boolean isHuman = p.getIsHuman();
         if (isHuman){
@@ -124,6 +146,11 @@ public class ConsoleIO implements GameIO {
     }
 
     @Override
+    public void showDealerPeeksMessage(){
+        println("The Dealer is peeking at their hole card...");
+    }
+
+    @Override
     public void showDealerRevealingCardMessage() {
         println("The Dealer is revealing their face down card......");
     }
@@ -132,6 +159,11 @@ public class ConsoleIO implements GameIO {
     public void printDealersBlackjackPair(Card faceUpCard, Card faceDownCard) {
         println("The Dealers cards are: [" + faceUpCard.getCardNotation() + ", " + faceDownCard.getCardNotation() + "]!");
         println("The Dealer also has Blackjack!");
+    }
+
+    @Override
+    public void showInsuranceResolvedMessage(){
+        println("Insurance Resolved");
     }
 
     @Override

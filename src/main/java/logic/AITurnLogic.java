@@ -4,6 +4,7 @@ import model.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class AITurnLogic implements TurnLogic {
     private final PlayerManager playerManager;
@@ -44,6 +45,7 @@ public class AITurnLogic implements TurnLogic {
         int totalHandValue = ai.getHandTotalBlackJackValue(ai.getFirstHand());
         return HandStrength.ofPlayerValue(totalHandValue);
     }
+
 
     public TurnResult hit(){
         cardsHitList.add(dealer.giveCard());

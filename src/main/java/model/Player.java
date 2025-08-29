@@ -11,6 +11,8 @@ public class Player {
     private final List<Hand> handList;
     private final boolean isHuman;
 
+
+
     public Player(String name, int balance, boolean isHuman) {
         this.name = name;
         this.balance = balance;
@@ -29,6 +31,7 @@ public class Player {
     public boolean getIsHuman() {
         return isHuman;
     }
+
 
     public List<Hand> getHandList(){
         return handList;
@@ -151,6 +154,17 @@ public class Player {
         splitHand.addCard(handToSplit.giveFirstCard());
         addHand(splitHand);
         return splitHand;
+    }
+
+    public boolean canAffordHalfOriginalBet(){
+        if (handList.isEmpty()){
+            throw new RuntimeException("This player does not have any hands");
+        }
+        return balance >= getFirstHand().getBet() / 2;
+    }
+
+    public int getHalfOriginalBet(){
+        return getFirstHand().getBet() / 2;
     }
 
 

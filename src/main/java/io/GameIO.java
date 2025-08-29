@@ -28,10 +28,14 @@ public interface GameIO {
     void printAcquiredCardNotification(Card firstCard, Card secondCard, Player player);
     void printDealersFaceUpCardNotification(Card faceUpCard);
 
+    boolean askForInsurance(int halfBet);
+    void printAIInsuresNotification(String aiName);
     void printBlackjackNotification(Player p);
 
+    void showDealerPeeksMessage();
     void showDealerRevealingCardMessage();
     void printDealersBlackjackPair(Card faceUpCardNotation, Card faceDownCard);
+    void showInsuranceResolvedMessage();
 
     void printAllCards(PlayerManager playerManager, Dealer dealer);
 

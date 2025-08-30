@@ -40,7 +40,7 @@ public interface GameIO {
     void printAllCards(PlayerManager playerManager, Dealer dealer);
 
     void showPlayerTurn(String name);
-    void displayPlayerOptions(boolean isFirstAction, boolean canAffordDoubleDown, boolean canSplit);
+    void displayPlayerOptions(boolean isFirstAction, boolean canAffordDoubleDown, boolean canSplit, boolean hasSplit);
     void displayInvalidActionMessage();
 
     void showDealerGivingCardMessage();
@@ -65,4 +65,5 @@ public interface GameIO {
     void printPlayerRoundSummary(String summary);
     void showGameOverMessage();
     void displayOutcomeMessage(Outcome outcome, int betMoney);
+    void displayHighScore(int highScore);
 }

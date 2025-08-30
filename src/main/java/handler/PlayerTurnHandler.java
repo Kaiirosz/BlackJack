@@ -40,12 +40,13 @@ public class PlayerTurnHandler implements TurnHandler {
         boolean isFirstAction = true;
         Hand currentHand = humanPlayer.getFirstUnresolvedHand();
         PlayerTurnLogic playerTurnLogic = new PlayerTurnLogic(gameContext, roundOutcome, currentHand);
-        boolean canAffordDoubleDown = humanPlayer.canAffordDoubleDown(currentHand);
-        boolean canSplit = humanPlayer.checkIfCanSplit(currentHand);
         TurnResult turnResult = TurnResult.CONTINUE;
         while (turnResult.equals(TurnResult.CONTINUE)) {
-            io.displayPlayerOptions(isFirstAction,canAffordDoubleDown, canSplit);
-            Action action = getAction(io, isFirstAction, canAffordDoubleDown, canSplit);
+            boolean canSplit = humanPlayer.checkIfCanSplit(currentHand);
+            boolean canAffordDoubleDown = humanPlayer.canAffordDoubleDown(currentHand);
+            boolean hasSplit = humanPlayer.checkIfHasSplit();
+            io.displayPlayerOptions(isFirstAction,canAffordDoubleDown, canSplit, hasSplit);
+            Action action = getAction(io, isFirstAction, canAffordDoubleDown, canSplit, hasSplit);
             Card cardHit;
             switch (action){
                 case HIT:
@@ -79,7 +80,6 @@ public class PlayerTurnHandler implements TurnHandler {
                     io.printAllCards(playerManager,dealer);
                     break;
             }
-            canSplit = false;
         }
         if (turnResult.equals(TurnResult.BUST)){
             io.printPlayerBustNotification();
@@ -94,10 +94,10 @@ public class PlayerTurnHandler implements TurnHandler {
         }
     }
 
-    Action getAction(GameIO io, boolean isFirstAction, boolean canAffordDoubleDown, boolean canSplit){
+    Action getAction(GameIO io, boolean isFirstAction, boolean canAffordDoubleDown, boolean canSplit, boolean hasSplit){
         while (true){
             try {
-                return Action.parseString(io.readLine(), isFirstAction, canAffordDoubleDown, canSplit);
+                return Action.parseString(io.readLine(), isFirstAction, canAffordDoubleDown, canSplit, hasSplit);
             } catch (IllegalArgumentException e) {
                 io.println(e.getMessage());
                 io.displayInvalidActionMessage();

@@ -3,6 +3,8 @@ package io;
 import logic.PlayerManager;
 import model.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleIO implements GameIO {
@@ -158,7 +160,7 @@ public class ConsoleIO implements GameIO {
     @Override
     public void printDealersBlackjackPair(Card faceUpCard, Card faceDownCard) {
         println("The Dealers cards are: [" + faceUpCard.getCardNotation() + ", " + faceDownCard.getCardNotation() + "]!");
-        println("The Dealer also has Blackjack!");
+        println("The Dealer has Blackjack!");
     }
 
     @Override
@@ -185,19 +187,21 @@ public class ConsoleIO implements GameIO {
     }
 
     @Override
-    public void displayPlayerOptions(boolean isFirstAction, boolean canAffordDoubleDown, boolean canSplit) {
+    public void displayPlayerOptions(boolean isFirstAction, boolean canAffordDoubleDown, boolean canSplit, boolean hasSplit) {
         println("What do you do now?");
-        StringBuilder sb = new StringBuilder("1. Hit\n2. Stand");
-        if (isFirstAction){
-            sb.append("\n3. Surrender");
+        List<String> possibleActionsList = new ArrayList<>(List.of("Hit", "Stand"));
+        if (isFirstAction && !hasSplit){
+            possibleActionsList.add("Surrender");
         }
         if (isFirstAction && canAffordDoubleDown){
-            sb.append("\n4. Double Down");
+            possibleActionsList.add("Double Down");
         }
         if (canSplit){
-            sb.append("\n5. Split");
+            possibleActionsList.add("Split");
         }
-        println(sb.toString());
+        for (int i = 0; i < possibleActionsList.size(); i++){
+            println(i + 1 + ". " + possibleActionsList.get(i));
+        }
     }
 
 
@@ -316,6 +320,10 @@ public class ConsoleIO implements GameIO {
                 break;
             default: throw new IllegalArgumentException("Unknown Outcome");
         }
+    }
+
+    public void displayHighScore(int highScore){
+        println("High Score: " + highScore / 100);
     }
 
 }

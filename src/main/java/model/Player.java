@@ -112,15 +112,10 @@ public class Player {
         return handToSplit.isSplitPair();
     }
 
-    public List<Hand> getAllSplittableHand(){
-        List<Hand> splittableHand = new ArrayList<>();
-        for (Hand hand : handList){
-            if (hand.isSplitPair()){
-                splittableHand.add(hand);
-            }
-        }
-        return splittableHand;
+    public boolean checkIfHasSplit(){
+        return handList.size() > 1;
     }
+
 
     public boolean hasUnresolvedHand(){
         for (Hand h : handList){

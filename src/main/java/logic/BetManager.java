@@ -49,8 +49,8 @@ public class BetManager {
         insuredPlayersList.add(player);
     }
 
-    public List<Player> getInsuredPlayersList(){
-        return insuredPlayersList;
+    public boolean aPlayerInsured(){
+        return !insuredPlayersList.isEmpty();
     }
 
     public void settleInsuranceBets(boolean dealerHasBJ) {

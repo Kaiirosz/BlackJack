@@ -7,8 +7,7 @@ public enum Action {
     SPLIT,
     SURRENDER;
 
-    public static Action parseString(String actionStr, boolean isFirstAction, boolean canAffordDoubleDown, boolean canSplit) {
-
+    public static Action parseString(String actionStr, boolean isFirstAction, boolean canAffordDoubleDown, boolean canSplit, boolean hasSplit) {
         if (actionStr.equalsIgnoreCase("SPLIT") && !canSplit){
             throw new IllegalArgumentException("Split not allowed here");
         }
@@ -17,8 +16,16 @@ public enum Action {
             throw new IllegalArgumentException("Surrender is only allowed on the first turn");
         }
 
-        if (actionStr.equalsIgnoreCase("DOUBLE DOWN") && !isFirstAction || !canAffordDoubleDown) {
+        if (actionStr.equalsIgnoreCase("SURRENDER") && hasSplit){
+            throw new IllegalArgumentException("Cannot surrender after splitting");
+        }
+
+        if (actionStr.equalsIgnoreCase("DOUBLE DOWN") && !isFirstAction) {
             throw new IllegalArgumentException("Double Down not allowed after first action");
+        }
+
+        if (actionStr.equalsIgnoreCase("DOUBLE DOWN") && !canAffordDoubleDown){
+            throw new IllegalArgumentException("Can not afford double down");
         }
 
         for (Action a : Action.values()) {

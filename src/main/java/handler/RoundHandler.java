@@ -120,9 +120,10 @@ public class RoundHandler {
     }
 
     private boolean checkForDealerBlackjack(BlackjackEvaluator blackjackEvaluator) {
-        io.showDealerPeeksMessage();
-        utils.pauseForEffect(2000);
+        utils.pauseForEffect(500);
         boolean dealerHasBlackjack = blackjackEvaluator.checkForDealerBlackjack();
+        io.showDealerPeeksMessage();
+        utils.pauseForEffect(500);
         if (dealerHasBlackjack) {
             io.showDealerRevealingCardMessage();
             utils.pauseForEffect(1000);
@@ -133,8 +134,11 @@ public class RoundHandler {
     }
 
     private void resolveInsurance(){
-        io.showInsuranceResolvedMessage();
-        betManager.clearInsuredPlayersList();
+        utils.pauseForEffect(1000);
+        if (betManager.aPlayerInsured()) {
+            io.showInsuranceResolvedMessage();
+            betManager.clearInsuredPlayersList();
+        }
     }
 
     private void humanPlayerTurn() {

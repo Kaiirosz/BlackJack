@@ -14,6 +14,7 @@ public class GameLogic {
     private final GameContext gameContext;
     private final GameIO io;
     private final GameUtils utils;
+    private int highScore;
 
     public GameLogic(GameIO io){
         gameContext = new GameContext();
@@ -52,6 +53,7 @@ public class GameLogic {
             RoundOutcome outcome = roundHandler.startRound();
             utils.pauseForEffect(1500);
             io.printRoundSummaryNotification();
+            utils.pauseForEffect(1000);
             for (Player p : outcome.getPlayerRoundSummaryMap().keySet()){
                 int totalBetResult = outcome.getPlayerTotalBetResult(p);
                 p.addMoney(totalBetResult);
@@ -61,9 +63,11 @@ public class GameLogic {
             dealer.returnCardsToDeck(playerManager);
             outcome.clear();
             utils.pauseForEffect(2000);
+            updateHighScore(humanPlayer.getBalance());
         }
         while (humanPlayer.getBalance() > 0);
         io.showGameOverMessage();
+        io.displayHighScore(highScore);
     }
 
     private void betMoney(){
@@ -90,6 +94,16 @@ public class GameLogic {
             int aiBet = betManager.placeAIBet(ai, betAmountInCents, newHand);
             io.showAIBetMadeMessage(ai, aiBet);
             utils.pauseForEffect(500);
+        }
+    }
+
+    private void updateHighScore(int playerCurrentBalance){
+        int defaultStartingBalance = 500000;
+        if (highScore == 0){
+            highScore = defaultStartingBalance;
+        }
+        if (playerCurrentBalance > highScore){
+            highScore = playerCurrentBalance;
         }
     }
 

@@ -20,7 +20,7 @@ public class Dealer {
 
     public void dealCards(PlayerManager playerManager){
 /*        Card pairCard = new Card(Value.ACE, Suit.SPADES, "♠");
-        Card pairCard2 = new Card(Value.TEN, Suit.SPADES, "♥");*/
+        Card pairCard2 = new Card(Value.ACE, Suit.SPADES, "♥");*/
         for (Player player : playerManager.getAllPlayersInRound()){
 /*            if (player.getIsHuman()){
                 Hand AIInitialHand = player.getFirstHand();

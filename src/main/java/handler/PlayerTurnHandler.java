@@ -29,22 +29,23 @@ public class PlayerTurnHandler implements TurnHandler {
 
     @Override
     public void handleTurn() {
-        io.showPlayerTurn(playerManager.getHumanPlayer().getName());
+        io.showPlayerTurn(humanPlayer.getName());
         utils.pauseForEffect(1000);
+        PlayerTurnLogic playerTurnLogic = new PlayerTurnLogic(gameContext, roundOutcome);
         while (humanPlayer.hasUnresolvedHand()){
-            processAction();
+            processAction(playerTurnLogic);
         }
     }
 
-    void processAction(){
-        boolean isFirstAction = true;
+    void processAction(PlayerTurnLogic playerTurnLogic){
         Hand currentHand = humanPlayer.getFirstUnresolvedHand();
-        PlayerTurnLogic playerTurnLogic = new PlayerTurnLogic(gameContext, roundOutcome, currentHand);
         TurnResult turnResult = TurnResult.CONTINUE;
+        boolean isFirstAction = true;
+        playerTurnLogic.setCurrentHand(currentHand);
         while (turnResult.equals(TurnResult.CONTINUE)) {
-            boolean canSplit = humanPlayer.checkIfCanSplit(currentHand);
+            boolean canSplit = humanPlayer.canSplit(currentHand);
             boolean canAffordDoubleDown = humanPlayer.canAffordDoubleDown(currentHand);
-            boolean hasSplit = humanPlayer.checkIfHasSplit();
+            boolean hasSplit = humanPlayer.hasSplit();
             io.displayPlayerOptions(isFirstAction,canAffordDoubleDown, canSplit, hasSplit);
             Action action = getAction(io, isFirstAction, canAffordDoubleDown, canSplit, hasSplit);
             Card cardHit;
@@ -86,12 +87,7 @@ public class PlayerTurnHandler implements TurnHandler {
             playerTurnLogic.resolveBust();
         }
         playerTurnLogic.resolveHand();
-        if (humanPlayer.hasUnresolvedHand()){
-            utils.pauseForEffect(1000);
-            io.displayNextHandMessage();
-            utils.pauseForEffect(1000);
-            io.printAllCards(playerManager, dealer);
-        }
+        announceNextHandIfAny();
     }
 
     Action getAction(GameIO io, boolean isFirstAction, boolean canAffordDoubleDown, boolean canSplit, boolean hasSplit){
@@ -99,17 +95,26 @@ public class PlayerTurnHandler implements TurnHandler {
             try {
                 return Action.parseString(io.readLine(), isFirstAction, canAffordDoubleDown, canSplit, hasSplit);
             } catch (IllegalArgumentException e) {
-                io.println(e.getMessage());
-                io.displayInvalidActionMessage();
+                io.displayInvalidActionMessage(e.getMessage());
             }
         }
     }
 
     private void revealDealtCard(Card cardHit){
-        io.showDealerGivingCardMessage();
+        io.showDealerDealingCardMessage();
         utils.pauseForEffect(1000);
         io.printRevealedCardNotification(cardHit);
         utils.pauseForEffect(1000);
+    }
+
+
+    private void announceNextHandIfAny(){
+        if (humanPlayer.hasUnresolvedHand()){
+            utils.pauseForEffect(1000);
+            io.displayNextHandMessage();
+            utils.pauseForEffect(1000);
+            io.printAllCards(playerManager, dealer);
+        }
     }
 
 }

@@ -1,7 +1,6 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.List;
 
 public class AIDecisionTable {
@@ -66,7 +65,7 @@ public class AIDecisionTable {
         }
         HandMatchup currentHandMatchup = new HandMatchup(aiHandStrength, dealerHandStrength);
         for (HandMatchup matchUp : handMatchUps){
-            if (matchUp.equals(currentHandMatchup)){
+            if (matchUp == currentHandMatchup){
                 return matchUp.getAction();
             }
         }

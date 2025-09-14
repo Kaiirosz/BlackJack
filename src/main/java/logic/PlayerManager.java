@@ -21,7 +21,7 @@ public class PlayerManager {
 
 
     public void initializeHumanPlayer(String humanName) {
-        humanPlayer = new Player(humanName, 500000, true);
+        humanPlayer = new Player(humanName, STARTING_BALANCE, true);
         players.add(humanPlayer);
     }
 
@@ -45,13 +45,13 @@ public class PlayerManager {
 
 
     public Player getHumanPlayer(){
-        if (!checkIfHumanIsInRound()){
+        if (!checkForHumanInRound()){
             throw new NoSuchElementException("There is no human player in the round");
         }
         return humanPlayer;
     }
 
-    public boolean checkIfHumanIsInRound(){
+    public boolean checkForHumanInRound(){
         return playersInRound.contains(humanPlayer);
     }
 
@@ -62,7 +62,7 @@ public class PlayerManager {
         return aiPlayers;
     }
 
-    public boolean checkIfAnAIStillInRound(){
+    public boolean checkForAIInRound(){
         return !getAIPlayersInRound().isEmpty();
     }
 

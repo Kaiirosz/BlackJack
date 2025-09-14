@@ -6,6 +6,7 @@ import model.*;
 import utils.GameUtils;
 
 import java.util.List;
+import java.util.Set;
 
 public class GameLogic {
     private final PlayerManager playerManager;
@@ -45,40 +46,31 @@ public class GameLogic {
     private void continueGameUntilPlayerHasNoMoney(){
         Player humanPlayer;
         do {
-            playerManager.removeAIPlayersOutOfMoney();
             playerManager.initializePlayersInRound();
             humanPlayer = playerManager.getHumanPlayer();
-            betMoney();
+            betMoney(humanPlayer);
             RoundHandler roundHandler = new RoundHandler(gameContext, io, utils);
-            RoundOutcome outcome = roundHandler.startRound();
-            utils.pauseForEffect(1500);
-            io.printRoundSummaryNotification();
-            utils.pauseForEffect(1000);
-            for (Player p : outcome.getPlayerRoundSummaryMap().keySet()){
-                int totalBetResult = outcome.getPlayerTotalBetResult(p);
-                p.addMoney(totalBetResult);
-                String summary = outcome.getPlayerRoundSummary(p).getSummary();
-                io.printPlayerRoundSummary(summary);
-            }
-            dealer.returnCardsToDeck(playerManager);
-            outcome.clear();
-            utils.pauseForEffect(2000);
-            updateHighScore(humanPlayer.getBalance());
+            RoundOutcome roundOutcome = roundHandler.startRound();
+            printRoundSummary(roundOutcome);
+            postRoundCleanUp(humanPlayer, roundOutcome);
         }
         while (humanPlayer.getBalance() > 0);
         io.showGameOverMessage();
         io.displayHighScore(highScore);
     }
 
-    private void betMoney(){
-        Player humanPlayer = playerManager.getHumanPlayer();
+    private void betMoney(Player humanPlayer){
+        int bet = askAndPlaceHumanBet(humanPlayer);
+        placeAIBets(bet);
+    }
+
+    private int askAndPlaceHumanBet(Player humanPlayer){
         int playerBalance = humanPlayer.getBalance();
         int bet;
         while (true){
             bet = io.askForBetAmount(playerBalance);
             if (betManager.isValidBet(playerBalance, bet)){
-                Hand newHand = new Hand();
-                humanPlayer.addHand(newHand);
+                Hand newHand = humanPlayer.addNewHand();
                 int betAmountInCents = bet * 100;
                 betManager.placePlayerBet(humanPlayer, betAmountInCents, newHand);
                 io.showBetWasMadeMessage(bet);
@@ -86,15 +78,40 @@ public class GameLogic {
             }
             io.showInvalidBetMessage();
         }
+        return bet;
+    }
+
+    private void placeAIBets(int playerBet){
         List<Player> aiPlayers = playerManager.getAIPlayersInRound();
-        int betAmountInCents = bet * 100;
+        int betAmountInCents = playerBet * 100;
         for (Player ai: aiPlayers){
-            Hand newHand = new Hand();
-            ai.addHand(newHand);
-            int aiBet = betManager.placeAIBet(ai, betAmountInCents, newHand);
-            io.showAIBetMadeMessage(ai, aiBet);
+            Hand newHand = ai.addNewHand();
+            int aiBet = Math.min(betAmountInCents, ai.getBalance());
+            betManager.placePlayerBet(ai, aiBet, newHand);
+            io.showAIBetMadeMessage(ai, aiBet / 100);
             utils.pauseForEffect(500);
         }
+    }
+
+    private void printRoundSummary(RoundOutcome outcome){
+        utils.pauseForEffect(1500);
+        io.printRoundSummaryNotification();
+        utils.pauseForEffect(1000);
+        Set<Player> playerKeySet = outcome.getPlayerRoundSummaryMap().keySet();
+        for (Player p : playerKeySet){
+            int totalBetResult = outcome.getPlayerTotalBetResult(p);
+            p.addMoney(totalBetResult);
+            String summary = outcome.getPlayerSummary(p);
+            io.printPlayerRoundSummary(summary);
+        }
+    }
+
+    private void postRoundCleanUp(Player humanPlayer, RoundOutcome roundOutcome){
+        playerManager.removeAIPlayersOutOfMoney();
+        dealer.returnCardsToDeck(playerManager);
+        roundOutcome.clear();
+        utils.pauseForEffect(1500);
+        updateHighScore(humanPlayer.getBalance());
     }
 
     private void updateHighScore(int playerCurrentBalance){

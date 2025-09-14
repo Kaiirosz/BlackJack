@@ -4,7 +4,6 @@ import model.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class AITurnLogic implements TurnLogic {
     private final PlayerManager playerManager;

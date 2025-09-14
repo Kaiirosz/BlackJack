@@ -5,7 +5,7 @@ import model.Player;
 
 import java.util.Random;
 
-public class AIInsuranceLogic { ;
+public class AIInsuranceLogic {
     private final Random random = new Random();
 
     public boolean decideToInsure(Player ai){

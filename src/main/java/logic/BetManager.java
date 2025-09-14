@@ -26,22 +26,9 @@ public class BetManager {
         player.subtractMoney(betInCents);
     }
 
-    public int placeAIBet(Player aiPlayer, int betAmount, Hand handToBetIn) { //case where AI has no money to bet TBD
-        int aiMoney = aiPlayer.getBalance();
-        if (betAmount > aiMoney) {
-            aiPlayer.subtractMoney(aiMoney);
-            handToBetIn.setBet(aiMoney);
-            return aiMoney / 100;
-        } else {
-            aiPlayer.subtractMoney(betAmount);
-            handToBetIn.setBet(betAmount);
-            return betAmount / 100;
-        }
-    }
-
     public boolean isValidBet(int playerBalance, int bet) {
         int betInCents = bet * 100;
-        return betInCents <= playerBalance && betInCents > 0;
+        return betInCents > 0 && betInCents <= playerBalance;
     }
 
     public void placeInsuranceBet(Player player, int insuranceBet) {
@@ -54,12 +41,11 @@ public class BetManager {
     }
 
     public void settleInsuranceBets(boolean dealerHasBJ) {
-        int insuranceBet;
         if (dealerHasBJ) {
             for (Player p : insuredPlayersList) {
-                int halfBet = p.getHalfOriginalBet();
-                insuranceBet = halfBet * 2;
-                p.addMoney(insuranceBet + halfBet);
+                int halfBet = p.getInsuranceBet();
+                int insuranceBetPayOut = halfBet * 2;
+                p.addMoney(insuranceBetPayOut + halfBet);
             }
         }
     }

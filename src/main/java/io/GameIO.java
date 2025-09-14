@@ -15,7 +15,6 @@ public interface GameIO {
 
     String askForPlayerName();
     int askForNumberOfAIPlayers();
-    void showInvalidNumberOfAIPlayersMessage();
 
     int askForBetAmount(int playerBalance);
     void showInvalidBetMessage();
@@ -41,9 +40,9 @@ public interface GameIO {
 
     void showPlayerTurn(String name);
     void displayPlayerOptions(boolean isFirstAction, boolean canAffordDoubleDown, boolean canSplit, boolean hasSplit);
-    void displayInvalidActionMessage();
+    void displayInvalidActionMessage(String errorMessage);
 
-    void showDealerGivingCardMessage();
+    void showDealerDealingCardMessage();
     void printRevealedCardNotification(Card hitCard);
     void displayCardsSplitMessage(Card pairCard);
     void printHittingForSplitHandNotification();
@@ -64,6 +63,5 @@ public interface GameIO {
     void printRoundSummaryNotification();
     void printPlayerRoundSummary(String summary);
     void showGameOverMessage();
-    void displayOutcomeMessage(Outcome outcome, int betMoney);
     void displayHighScore(int highScore);
 }

@@ -56,11 +56,6 @@ public class ConsoleIO implements GameIO {
     }
 
     @Override
-    public void showInvalidNumberOfAIPlayersMessage(){
-        println("Invalid amount of players. Try Again.");
-    }
-
-    @Override
     public int askForBetAmount(int playerBalance) {
         println("Enter the amount of money you want to bet: ");
         printMoney(playerBalance);
@@ -170,8 +165,8 @@ public class ConsoleIO implements GameIO {
 
     @Override
     public void printAllCards(PlayerManager playerManager, Dealer dealer) {
-        println("-------------------------------------------");
-        if (playerManager.checkIfHumanIsInRound()){
+        println("--------------");
+        if (playerManager.checkForHumanInRound()){
             Player humanPlayer = playerManager.getHumanPlayer();
             println("Your cards: " + humanPlayer.getAllHandsAndValues());
         }
@@ -206,12 +201,13 @@ public class ConsoleIO implements GameIO {
 
 
     @Override
-    public void displayInvalidActionMessage(){
+    public void displayInvalidActionMessage(String errorMessage){
+        println(errorMessage);
         println("Invalid Action. Try Again.");
     }
 
     @Override
-    public void showDealerGivingCardMessage() {
+    public void showDealerDealingCardMessage() {
         println("The Dealer gave a card...");
     }
 
@@ -254,7 +250,6 @@ public class ConsoleIO implements GameIO {
 
     @Override
     public void printAICards(Player p){
-        Hand initialAIHand = p.getFirstHand();
         println(p.getName() + "'s cards: " + p.getAllHandsAndValues());
     }
 
@@ -298,29 +293,6 @@ public class ConsoleIO implements GameIO {
         println("Game Over");
     }
 
-    @Override
-    public void displayOutcomeMessage(Outcome outcome, int betMoney) {
-        switch (outcome){
-            case BLACKJACK:
-                println("You won " + betMoney / 100 + "!!");
-                break;
-            case WIN:
-                println("You win!");
-                println("Winnings: " + betMoney / 100);
-                break;
-            case PUSH:
-                println("Push");
-                break;
-            case LOSE:
-                println("You lose!");
-                break;
-            case BUST:
-                println("Bust!");
-                println("You lose!");
-                break;
-            default: throw new IllegalArgumentException("Unknown Outcome");
-        }
-    }
 
     public void displayHighScore(int highScore){
         println("High Score: " + highScore / 100);

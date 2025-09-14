@@ -37,8 +37,10 @@ public class Player {
         return handList;
     }
 
-    public void addHand(Hand hand){
+    public Hand addNewHand(){
+        Hand hand = new Hand();
         handList.add(hand);
+        return hand;
     }
 
     public int getHandBet(Hand handToGetBetFrom){
@@ -63,10 +65,6 @@ public class Player {
 
     public Hand getFirstHand(){
         return handList.getFirst();
-    }
-
-    public String getDisplayedHand(Hand handToDisplay) {
-        return handToDisplay.getDisplayedHand();
     }
 
     public int getHandTotalBlackJackValue(Hand hand){
@@ -105,14 +103,14 @@ public class Player {
         return balance >= doubleDownAmount;
     }
 
-    public boolean checkIfCanSplit(Hand handToSplit){
+    public boolean canSplit(Hand handToSplit){
         if (!canAffordDoubleDown(handToSplit)){
             return false;
         }
         return handToSplit.isSplitPair();
     }
 
-    public boolean checkIfHasSplit(){
+    public boolean hasSplit(){
         return handList.size() > 1;
     }
 
@@ -145,20 +143,19 @@ public class Player {
     }
 
     public Hand splitHand(Hand handToSplit){
-        Hand splitHand = new Hand();
+        Hand splitHand = addNewHand();
         splitHand.addCard(handToSplit.giveFirstCard());
-        addHand(splitHand);
         return splitHand;
     }
 
-    public boolean canAffordHalfOriginalBet(){
+    public boolean canAffordInsurance(){
         if (handList.isEmpty()){
             throw new RuntimeException("This player does not have any hands");
         }
         return balance >= getFirstHand().getBet() / 2;
     }
 
-    public int getHalfOriginalBet(){
+    public int getInsuranceBet(){
         return getFirstHand().getBet() / 2;
     }
 

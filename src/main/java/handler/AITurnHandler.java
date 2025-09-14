@@ -83,6 +83,17 @@ public class AITurnHandler implements TurnHandler {
             aiTurnLogic.resolveBust();
         }
         aiTurnLogic.resolveHand();
+        announceNextHandIfAny(ai);
+    }
+
+    private void revealDealtCard(Card cardHit) {
+        io.showDealerDealingCardMessage();
+        utils.pauseForEffect(1000);
+        io.printRevealedCardNotification(cardHit);
+        utils.pauseForEffect(1000);
+    }
+
+    private void announceNextHandIfAny(Player ai){
         if (ai.hasUnresolvedHand()){
             utils.pauseForEffect(1000);
             io.displayNextHandMessage();
@@ -90,12 +101,5 @@ public class AITurnHandler implements TurnHandler {
             io.printAICards(ai);
             utils.pauseForEffect(1000);
         }
-    }
-
-    private void revealDealtCard(Card cardHit) {
-        io.showDealerGivingCardMessage();
-        utils.pauseForEffect(1000);
-        io.printRevealedCardNotification(cardHit);
-        utils.pauseForEffect(1000);
     }
 }

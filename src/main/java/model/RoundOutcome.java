@@ -14,11 +14,11 @@ public class RoundOutcome {
         playerRoundSummaryMap.put(player, new PlayerRoundSummary(player, totalBetResult));
     }
 
-    public PlayerRoundSummary getPlayerRoundSummary(Player player){
+    public String getPlayerSummary(Player player){
         if (!playerRoundSummaryMap.containsKey(player)){
             throw new IllegalArgumentException("Equals Wrong. Player not found");
         }
-        return playerRoundSummaryMap.get(player);
+        return playerRoundSummaryMap.get(player).getSummary();
     }
 
     public int getPlayerTotalBetResult(Player player){

@@ -11,19 +11,23 @@ public class PlayerTurnLogic implements TurnLogic {
     private final BetManager betManager;
     private final RoundOutcome roundOutcome;
     private final Player humanPlayer;
-    private final Hand currentHand;
-    private List<Card> cardsHitList;
+    private  Hand currentHand;
+    private final List<Card> cardsHitList;
     private static final int BLACKJACK_VALUE = 21;
 
 
-    public PlayerTurnLogic(GameContext gameContext, RoundOutcome roundOutcome, Hand currentHand){
+    public PlayerTurnLogic(GameContext gameContext, RoundOutcome roundOutcome){
         this.playerManager = gameContext.getPlayerManager();
         this.dealer = gameContext.getDealer();
         this.betManager = gameContext.getBetManager();
         this.roundOutcome = roundOutcome;
         this.humanPlayer = playerManager.getHumanPlayer();
-        this.currentHand = currentHand;
+
         this.cardsHitList = new ArrayList<>();
+    }
+
+    public void setCurrentHand(Hand currentHand){
+        this.currentHand = currentHand;
     }
 
     public TurnResult hit(){
